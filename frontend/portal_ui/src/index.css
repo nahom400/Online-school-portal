@@ -1,5 +1,5 @@
 body{
-  margin: 10px;
+  /*margin: 10px;*/
 }
 .Entry{
   /*width: 100%;*/
@@ -7,6 +7,10 @@ body{
   margin: 0;
   padding: 10px;
   background-color: #dddddd;
+}
+nav{
+  display: flex;
+  justify-content: space-between;
 }
 .body{
   display: flex;

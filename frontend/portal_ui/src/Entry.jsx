@@ -1,12 +1,18 @@
-
-function Entry({}){
+function Entry({logOut, userName, }){
 	return (<>
 		<div className="Entry ">
+			<nav>
+				<div>
+					<div>
+			 			<p>Student: Student Name<br/>Grade: Grade Status</p>
+		 			</div>
+				</div>
+				<div>
+					<button className="btn btn-primary" onClick={logOut}>Logout</button>
+				</div>
+			</nav>
+
 		 	<div className="header fw-bolder">
-		 		<div>
-		 			<p>Student: StudentName</p>
-		 			<p>Grade: GradeStatus</p>
-		 		</div>
 		 		<div></div>
 		 	</div>
 		 	<div className="body">
