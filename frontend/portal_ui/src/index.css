@@ -1,0 +1,18 @@
+.SignBox{
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+  border: solid black;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.SignBox input{
+  margin-left: 10px;
+  border: none;
+  background-color: #cccccc;
+  border-radius: 5px;
+  padding: 10px;
+}
