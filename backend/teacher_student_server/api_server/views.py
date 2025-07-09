@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group, User
+from django.http import JsonResponse, Http404
 from rest_framework import permissions, viewsets
 
 from .serializers import GroupSerializer, UserSerializer
@@ -34,3 +35,55 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+def get_token(request):
+    Users = [
+        {
+            "username":"abel",
+            "password":"123",
+            "token":"wi9039jd43d2",
+            "token_refresh":"89dh378d3d3s3"
+        },
+        {
+            "username":"sal",
+            "password":"1234",
+            "token":"4903if0u38f4",
+            "token_refresh":"94q378fxwx7o43x"
+        },
+        {
+            "username":"sami",
+            "password":"12345",
+            "token":"adh93hf43dd32",
+            "token_refresh":"fihef893uew3"
+        },
+        {
+            "username":"leoul",
+            "password":"123456",
+            "token":"fihef893uew3",
+            "token_refresh":"wi9039jd43d2"
+        },
+        {
+            "username":"nati",
+            "password":"1234567",
+            "token":"89dh378d3d3s3",
+            "token_refresh":"adh93hf43dd32"
+        },
+    ]
+    for user in Users:
+        try:
+            if user['username'] == request.GET.get('username'):
+                if user['password'] == request.GET.get('password'):
+                    token = user['token']
+                    token_refresh = user['token_refresh']
+                    return JsonResponse({
+                        "token":token,
+                        "token_refresh":token_refresh,
+                        "error": None
+                        })
+        except AttributeError:
+            return JsonResponse({
+                        "error": "Please enter correct credentials"
+                        })
+
+    return JsonResponse({"error":'Recheck your username and password please!'})
+
