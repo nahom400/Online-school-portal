@@ -1,4 +1,10 @@
-function Entry({logOut, userName, }){
+import { useState } from "react";
+import useSWR from 'swr';
+
+const fetcher = (...args) => fetch(...args).then((res)=>res.json())
+
+function Entry({logOut, userName, token,}){
+
 	return (<>
 		<div className="Entry ">
 			<nav>

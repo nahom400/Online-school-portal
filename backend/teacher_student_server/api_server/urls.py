@@ -1,7 +1,7 @@
 # pdf_viewer/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import get_token
+from .views import get_token, validate_token
 
 # Create a router and register our viewset with it.
 router = DefaultRouter()
@@ -16,5 +16,7 @@ urlpatterns = [
     # path('get_book/<int:pk>/', get_book),
     # path('get_all_books/', get_all_books),
     # path('get_all_blogs/', get_all_blogs),
-    path('get_token/', get_token)    
+    path('get_token/', get_token),
+    path('validate_token', validate_token)
+
 ]
