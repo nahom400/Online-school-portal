@@ -26,7 +26,7 @@ function App(){
 			localStorage.setItem("ACCESS_TOKEN",response.token)
 			localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
 			// localStorage.setItem("USERNAME",)
-			setMyToken(response.token)	
+			setMyToken(response.token)
 		}
 	}
 
@@ -34,6 +34,21 @@ function App(){
 		localStorage.removeItem("ACCESS_TOKEN")
 		localStorage.removeItem("REFRESH_TOKEN")
 		setMyToken(null)
+	}
+	
+	function signInAction(formData){
+		const username = formData.get('username')
+		const password = formData.get('password')
+		console.log("Signin action from app.jsx")
+		const FULL_URL = BASE_URL + REQUEST_URL + `?username=${username}&password=${password}`
+		setFullUrl(FULL_URL)
+
+		if (response){
+			localStorage.setItem("ACCESS_TOKEN",response.token)
+			localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
+			// localStorage.setItem("USERNAME",)
+			setMyToken(response.token)
+		}
 	}
 
 	const {data:response, isValidating, error} = useSWR(fullUrl, fetcher)

@@ -12,6 +12,8 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 
+
+
 # the difference between ModelSerializer and HyperlinkedModelSerializer
 
 # Notice that we're using hyperlinked relations in this case with HyperlinkedModelSerializer. You can also use primary key and various other relationships, but hyperlinking is good RESTful design.
