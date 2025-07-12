@@ -20,7 +20,7 @@ subjects_list = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History'
 teachers = [
     Teacher.objects.create(
         firstname=random.choice(first_names),
-        username=random.choices(first_names),
+        username=random.choice(first_names),
         password=DUMMY_PASSWORD,
         token=random.choice(tokens),
         lastname=random.choice(last_names),
@@ -41,7 +41,7 @@ students = [
     Student.objects.create(
         firstname=random.choice(first_names),
         lastname=random.choice(last_names),
-        username=random.choices(first_names),
+        username=random.choice(first_names),
         password=DUMMY_PASSWORD,
         token=random.choice(tokens),
         email=f"student{i}@school.com",

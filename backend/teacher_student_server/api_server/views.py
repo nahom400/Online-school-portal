@@ -65,7 +65,9 @@ def get_token(request):
         for teacher in teachers:
             if (teacher['username'] == credentials['username']):
                 if (teacher['password'] == credentials['password']):
-                    return JsonResponse({'token':teacher['token'], 'error':None})
+                    echo = credentials.copy()
+                    echo.pop('password')
+                    return JsonResponse({'token':teacher['token'], 'error':None, 'echo':echo})
         return JsonResponse({'error':"Username and/or password is wrong!", 'token':None})
 
     if credentials['role'] == 'student':
@@ -73,7 +75,9 @@ def get_token(request):
         for student in students:
             if (student['username'] == credentials['username']):
                 if (student['password'] == credentials['password']):
-                    return JsonResponse({'token':student['token'], 'error':None})
-        return JsonResponse({'error':"Username and/or password is wrong!", 'token':None})
+                    echo = credentials.copy()
+                    echo.pop('password')
+                    return JsonResponse({'token':student['token'], 'error':None, 'echo':echo})
+        return JsonResponse({'error':"Username and/or password is wrong!", 'token':None, })
     return JsonResponse({"error":'nothing really worked', 'token':None})
 

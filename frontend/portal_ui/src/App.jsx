@@ -12,67 +12,57 @@ const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
 
 function App(){
 
-	const [myToken, setMyToken] = useState(localStorage.getItem("ACCESS_TOKEN"))
-	const [fullUrl, setFullUrl] = useState(null)
+	const [myToken, setMyToken] = useState(null) // if this value is non-null our website renders the entry page
+	const [fullUrl, setFullUrl] = useState(null) // whenever this changes our SWR fetches authentication from database 
 
-	function signInAction(formData){
+	// function fired when we submit the form: role, username and password
+	function signInAction(formData){ 
 		const role = formData.get('role_selector')
 		const username = formData.get('username')
 		const password = formData.get('password')
-		console.log(role)
-		const FULL_URL = BASE_URL + REQUEST_URL + `?role=${role}&username=${username}&password=${password}`
-		console.log(FULL_URL)
-		setFullUrl(FULL_URL) // triggers the swr fetch
-
-		
+		const FULL_URL = BASE_URL + REQUEST_URL + `?role=${role}&username=${username}&password=${password}` //just for the time being this is the way we are doing the url query. So these are the data that django gets by regex!
+		setFullUrl(FULL_URL) // triggers the SWR to fetch 
 	}
 
 	function logOut(){
-		localStorage.removeItem("ACCESS_TOKEN")
-		localStorage.removeItem("REFRESH_TOKEN")
-		setMyToken(null)
+		localStorage.removeItem("ACCESS_TOKEN") //All localStorage keys get removed
+		localStorage.removeItem("USER_NAME")
+		localStorage.removeItem("ROLE")
+		setMyToken(null) //ensures that the user comes to the login page
+		setFullUrl(null) // we must set full url to null otherwise if the user tries to relogin without reloading the page; he/she fails because afterall the fullurl won't change so SWR will not be fired again for the same state!
 	}
-	
-	// function signInAction(formData){
-	// 	const username = formData.get('username')
-	// 	const password = formData.get('password')
-	// 	console.log("Signin action from app.jsx")
-	// 	const FULL_URL = BASE_URL + REQUEST_URL + `?role=student&username=${username}&password=${password}`
-	// 	setFullUrl(FULL_URL)
 
-	// 	if (response){
-	// 		localStorage.setItem("ACCESS_TOKEN",response.token)
-	// 		localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
-	// 		// localStorage.setItem("USERNAME",)
-	// 		setMyToken(response.token)
-	// 	}
-	// }
-
-	const {data:response, isValidating, error} = useSWR(fullUrl, fetcher)
+	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
 	useEffect( ()=>
 		{
-			if (response){
-				if (response.error){
-
-					}
-				// localStorage.setItem("USERNAME",)
-				else if (response.token){
-					localStorage.setItem("ACCESS_TOKEN",response.token)
-					localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
-					setMyToken(response.token)
-				}
-				else if (localStorage.getItem('ACCESS_TOKEN')){
-					setMyToken(localStorage.getItem('ACCESS_TOKEN'))
-				}
+			
+			if (response?.error){
+				console.log("ERROR UNKNOWN ERROR")
 			}
-		},[response]//whenever response changes or at startup
+			if (response?.token){
+				localStorage.setItem("ACCESS_TOKEN",response.token)
+				localStorage.setItem("USER_NAME",response.echo.username)
+				localStorage.setItem("ROLE", response.echo.role)
+				setMyToken(response.token) // Ensure we go to the entry page!
+			}
+			if (localStorage.getItem('ACCESS_TOKEN')){
+				setMyToken(localStorage.getItem('ACCESS_TOKEN'))
+			}
+
+		},[response] // this line means at startup or whenever 'response' changes  
 	)
 	return(
-		<>
+		<div>
 			{/*<h1 class="">This is the portal for Teachers and Students </h1>
 			<p>Please sign-in: if you're a teacher it takes you to the teacher's portal and if you're a student it takes you to the students portal</p>*/}
-			{ myToken ? <Entry logOut={logOut}/> :  <SignBox signInAction={signInAction}/>}
-		</>
+
+			{ myToken ? <Entry 	role={localStorage.getItem('ROLE')}
+								token={localStorage.getItem('ACCESS_TOKEN')}
+							 	username={localStorage.getItem("USER_NAME")}
+							 	logOut={logOut}/> :  
+							 	<SignBox signInAction={signInAction}/>
+							 }
+		</div>
 		)
 }
 

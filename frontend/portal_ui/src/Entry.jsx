@@ -3,14 +3,17 @@ import useSWR from 'swr';
 
 const fetcher = (...args) => fetch(...args).then((res)=>res.json())
 
-function Entry({logOut, userName, token,}){
+const BASE_URL = "http://127.0.0.1:8000/"
+const REQUEST_URL = "users/"
 
+function Entry({logOut, username, token, role}){
+	const {data, error, isValidating} = useSWR("")
 	return (<>
-		<div className="Entry ">
+		<div className="Entry bg-gradient ">
 			<nav>
 				<div>
 					<div>
-			 			<p>Student: Student Name<br/>Grade: Grade Status</p>
+			 			<p>Welcome : {username} <br/>{role} marking</p>
 		 			</div>
 				</div>
 				<div>
