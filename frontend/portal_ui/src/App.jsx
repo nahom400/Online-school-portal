@@ -12,7 +12,7 @@ const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
 
 function App(){
 
-	const [myToken, setMyToken] = useState(null) // if this value is non-null our website renders the entry page
+	const [myToken, setMyToken] = useState(localStorage.getItem('ACCESS_TOKEN')) // if this value is non-null our website renders the entry page
 	const [fullUrl, setFullUrl] = useState(null) // whenever this changes our SWR fetches authentication from database 
 
 	// function fired when we submit the form: role, username and password
@@ -45,9 +45,6 @@ function App(){
 				localStorage.setItem("ROLE", response.echo.role)
 				setMyToken(response.token) // Ensure we go to the entry page!
 			}
-			if (localStorage.getItem('ACCESS_TOKEN')){
-				setMyToken(localStorage.getItem('ACCESS_TOKEN'))
-			}
 
 		},[response] // this line means at startup or whenever 'response' changes  
 	)
@@ -57,7 +54,7 @@ function App(){
 			<p>Please sign-in: if you're a teacher it takes you to the teacher's portal and if you're a student it takes you to the students portal</p>*/}
 
 			{ myToken ? <Entry 	role={localStorage.getItem('ROLE')}
-								token={localStorage.getItem('ACCESS_TOKEN')}
+								token={myToken}
 							 	username={localStorage.getItem("USER_NAME")}
 							 	logOut={logOut}/> :  
 							 	<SignBox signInAction={signInAction}/>
