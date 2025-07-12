@@ -20,7 +20,10 @@ function App(){
 		const role = formData.get('role_selector')
 		const username = formData.get('username')
 		const password = formData.get('password')
-		const FULL_URL = BASE_URL + REQUEST_URL + `?role=${role}&username=${username}&password=${password}` //just for the time being this is the way we are doing the url query. So these are the data that django gets by regex!
+
+		const params = new URLSearchParams({role, username, password})
+		const FULL_URL = BASE_URL + REQUEST_URL + `?` + params.toString() //just for the time being this is the way we are doing the url query. So these are the data that django gets by regex!
+
 		setFullUrl(FULL_URL) // triggers the SWR to fetch 
 	}
 
@@ -59,6 +62,13 @@ function App(){
 							 	logOut={logOut}/> :  
 							 	<SignBox signInAction={signInAction}/>
 							 }
+			{ isValidating ? <div className='position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75' style={{'z-index':1050}}>
+				<div className="spinner-border">
+					<span className="visually-hidden">Loading...</span>
+				</div>
+			</div>:null
+			}
+
 		</div>
 		)
 }

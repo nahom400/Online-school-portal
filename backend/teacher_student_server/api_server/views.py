@@ -1,6 +1,8 @@
-from .models import Teacher, Student
+from operator import truediv
+from .models import Mark, Teacher, Student
 from django.http import JsonResponse, Http404
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, response
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import string
 from .serializers import TeacherSerializer, StudentSerializer, MarkSerializer
@@ -35,6 +37,11 @@ class TeacherViewSet(viewsets.ModelViewSet):
     """
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
+class MarkViewSet (viewsets.ModelViewSet):
+
+    queryset = Mark.objects.all()
+    serializer_class = MarkSerializer
+
 
 def validate_token(request):
     for user in Users:
@@ -80,4 +87,19 @@ def get_token(request):
                     return JsonResponse({'token':student['token'], 'error':None, 'echo':echo})
         return JsonResponse({'error':"Username and/or password is wrong!", 'token':None, })
     return JsonResponse({"error":'nothing really worked', 'token':None})
+
+
+@api_view(['GET'])
+def get_all_scores(request):
+    req = request.GET
+    if not (req['token'] and (req['username'] and req['role'])):
+        return JsonResponse({'error':"you're required to input username, role and token"})
+    # try:
+    student = Student.objects.get(username=req['username'], token=req['token'])
+    scores_data = Mark.objects.filter(student=student)
+    scores_serializer = MarkSerializer(scores_data, many=True)
+    return Response(scores_serializer.data)
+    # except:
+        # return Response({'error':"Unauthorized; you'll need a valid username, role and token"})
+
 

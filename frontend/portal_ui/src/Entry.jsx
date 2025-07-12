@@ -1,5 +1,7 @@
 import { useState } from "react";
 import useSWR from 'swr';
+import StudentDashboard from "./components/StudentDashboard";
+
 
 const fetcher = (...args) => fetch(...args).then((res)=>res.json())
 
@@ -8,20 +10,27 @@ const REQUEST_URL = "users/"
 
 function Entry({logOut, username, token, role}){
 	const {data, error, isValidating} = useSWR("")
+
 	return (<>
 		<div className="Entry bg-gradient ">
-			<nav>
-				<div>
+			<div className="bg-primary-subtle">
+				<nav>
 					<div>
-			 			<p>Welcome : {username} <br/>{role} marking</p>
-		 			</div>
-				</div>
+						<div>
+				 			<p>Welcome : {username} <br/>{role} marking</p>
+			 			</div>
+					</div>
+					<div>
+						<button className="btn btn-primary" onClick={logOut}>Logout</button>
+					</div>
+				</nav>
+			</div>
+			<div>
 				<div>
-					<button className="btn btn-primary" onClick={logOut}>Logout</button>
-				</div>
-			</nav>
-
-		 	<div className="header fw-bolder">
+					<StudentDashboard token={token} username={username}/>
+		 		</div>
+		 	</div>
+		 	{/*<div className="header fw-bolder">
 		 		<div></div>
 		 	</div>
 		 	<div className="body">
@@ -34,7 +43,7 @@ function Entry({logOut, username, token, role}){
 		 		<div className="panel-right">
 		 			Panel-right
 		 		</div>
-		 	</div>
+		 	</div>*/}
 		 </div> 
 	</>)
 }

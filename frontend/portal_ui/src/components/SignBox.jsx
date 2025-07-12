@@ -1,6 +1,7 @@
-function SignBox({signInAction}){
+function SignBox({signInAction, isValidating, error}){
 
 	return (
+	<div>
 		<form action={signInAction} className="SignBox">
 			<label> Role:   
 				<select name="role_selector" id="role_selector">
@@ -17,6 +18,9 @@ function SignBox({signInAction}){
 			</label>
 			<button className="btn btn-primary"> Sign-in </button>
 		</form>
+		
+	</div>
+
 	)
 }
 

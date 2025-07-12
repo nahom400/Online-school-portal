@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Teacher, Student, Mark
+from .models import Teacher, Student, Mark, Subject
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
@@ -11,10 +11,14 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = ['username','firstname','lastname','password','token']
 
 class MarkSerializer(serializers.ModelSerializer):
+    subject_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Mark
-        fields = ['student','subject','mark','date_recorded']
+        fields = ['student','subject_name','mark','date_recorded']
 
+    def get_subject_name(self, obj):
+        return str(obj.subject)
 
 
 
