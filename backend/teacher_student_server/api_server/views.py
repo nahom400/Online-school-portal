@@ -102,4 +102,3 @@ def get_all_scores(request):
     # except:
         # return Response({'error':"Unauthorized; you'll need a valid username, role and token"})
 
-

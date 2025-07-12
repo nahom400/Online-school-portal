@@ -16,7 +16,7 @@ function SignBox({signInAction, isValidating, error}){
 			<label> Password: 
 				<input name="password" className="input" type="password" />
 			</label>
-			<button className="btn btn-primary"> Sign-in </button>
+			<button className="btn btn-primary"> Log-in </button>
 		</form>
 		
 	</div>

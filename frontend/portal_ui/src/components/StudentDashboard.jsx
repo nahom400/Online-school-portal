@@ -18,25 +18,32 @@ function StudentDashboard({username, token}){
 	)
 	
 	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
+	
 	if (response){
 		console.log(response)
-		const scores = response
-		return (<div className="container-md">
-			<table className="table table-striped table-bordered table-hover" >
+		// const response = response.map(({subject_name, mark, date_recorded})=>({subject_name, mark, date_recorded, }))
+		// console.log(scores)
+		return (<div className="container-md flex-wrap">
+			<h1>Scores</h1>
+			<table className="table table-striped table-bordered table-hover flex-wrap" >
 				<thead className="table-dark">
 					<tr>
 					<th>Subject</th>
-					{scores.map((asubject)=>(<th>{asubject.subject_name}</th>))}
+					{response.map((subject)=>(<th>{subject.subject_name}</th>))}
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 					<th>Score</th>
-					{scores.map((asubject)=>(<th>{asubject.mark}</th>))}
+					{response.map((subject)=>(<th>{subject.mark}</th>))}
 					</tr>
 					<tr>
-					<th>Date Recorded</th>
-					{scores.map((asubject)=>(<th>{asubject.date_recorded}</th>))}
+					<th>Grade</th>
+					{response.map((subject)=>(<th>{subject.grade_letter}</th>))}
+					</tr>
+					<tr>
+					<th>Recorded</th>
+					{response.map((subject)=>(<th>{subject.date_recorded}</th>))}
 					</tr>
 				</tbody>
 			</table>
