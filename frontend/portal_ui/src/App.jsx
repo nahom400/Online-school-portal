@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 import Entry from './Entry'
 import SignBox from './components/SignBox'
@@ -16,18 +16,15 @@ function App(){
 	const [fullUrl, setFullUrl] = useState(null)
 
 	function signInAction(formData){
+		const role = formData.get('role_selector')
 		const username = formData.get('username')
 		const password = formData.get('password')
-		console.log("Signin action from app.jsx")
-		const FULL_URL = BASE_URL + REQUEST_URL + `?username=${username}&password=${password}`
-		setFullUrl(FULL_URL)
+		console.log(role)
+		const FULL_URL = BASE_URL + REQUEST_URL + `?role=${role}&username=${username}&password=${password}`
+		console.log(FULL_URL)
+		setFullUrl(FULL_URL) // triggers the swr fetch
 
-		if (response){
-			localStorage.setItem("ACCESS_TOKEN",response.token)
-			localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
-			// localStorage.setItem("USERNAME",)
-			setMyToken(response.token)
-		}
+		
 	}
 
 	function logOut(){
@@ -36,22 +33,40 @@ function App(){
 		setMyToken(null)
 	}
 	
-	function signInAction(formData){
-		const username = formData.get('username')
-		const password = formData.get('password')
-		console.log("Signin action from app.jsx")
-		const FULL_URL = BASE_URL + REQUEST_URL + `?username=${username}&password=${password}`
-		setFullUrl(FULL_URL)
+	// function signInAction(formData){
+	// 	const username = formData.get('username')
+	// 	const password = formData.get('password')
+	// 	console.log("Signin action from app.jsx")
+	// 	const FULL_URL = BASE_URL + REQUEST_URL + `?role=student&username=${username}&password=${password}`
+	// 	setFullUrl(FULL_URL)
 
-		if (response){
-			localStorage.setItem("ACCESS_TOKEN",response.token)
-			localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
-			// localStorage.setItem("USERNAME",)
-			setMyToken(response.token)
-		}
-	}
+	// 	if (response){
+	// 		localStorage.setItem("ACCESS_TOKEN",response.token)
+	// 		localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
+	// 		// localStorage.setItem("USERNAME",)
+	// 		setMyToken(response.token)
+	// 	}
+	// }
 
 	const {data:response, isValidating, error} = useSWR(fullUrl, fetcher)
+	useEffect( ()=>
+		{
+			if (response){
+				if (response.error){
+
+					}
+				// localStorage.setItem("USERNAME",)
+				else if (response.token){
+					localStorage.setItem("ACCESS_TOKEN",response.token)
+					localStorage.setItem("REFRESH_TOKEN",response.token_refresh)
+					setMyToken(response.token)
+				}
+				else if (localStorage.getItem('ACCESS_TOKEN')){
+					setMyToken(localStorage.getItem('ACCESS_TOKEN'))
+				}
+			}
+		},[response]//whenever response changes or at startup
+	)
 	return(
 		<>
 			{/*<h1 class="">This is the portal for Teachers and Students </h1>

@@ -1,19 +1,23 @@
 from rest_framework import serializers
-from .models import Teacher, Student
+from .models import Teacher, Student, Mark
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ['username','first_name','last_name','section','teachers_assigned_to','subjects']
+        fields = ['username','firstname','lastname','password','token']
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ['username','first_name','last_name','inbox']
+        fields = ['username','firstname','lastname','password','token']
 
+class MarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mark
+        fields = ['student','subject','mark','date_recorded']
 
 
 
 
 # the difference between ModelSerializer and HyperlinkedModelSerializer
 
-# Notice that we're using hyperlinked relations in this case with HyperlinkedModelSerializer. You can also use primary key and various other relationships, but hyperlinking is good RESTful design.
+# Notice that we're using hyperlinked relations in this case with HyperlinkedModelSerializer. You can also use primary key and various other relationships, but hyperlinking is good RESTful design.class 
