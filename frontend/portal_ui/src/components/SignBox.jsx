@@ -4,8 +4,8 @@ function SignBox({signInAction, isValidating, error}){
 	<div>
 		<form action={signInAction} className="SignBox">
 			<label> Role:   
-				<select name="role_selector" id="role_selector">
-				 	<option value="teacher" selected>Teacher</option>
+				<select name="role_selector" id="role_selector" defaultValue={localStorage.getItem('ROLE')}>
+				 	<option value="teacher">Teacher</option>
 				 	<option value="student">Student</option>
 				 </select> 
 

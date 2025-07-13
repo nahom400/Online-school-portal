@@ -11,12 +11,16 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = ['username','firstname','lastname','password','token']
 
 class MarkSerializer(serializers.ModelSerializer):
+    student_name = serializers.SerializerMethodField()
     subject_name = serializers.SerializerMethodField()
     grade_letter = serializers.SerializerMethodField()
 
     class Meta:
         model = Mark
-        fields = ['student','subject_name','mark','grade_letter','date_recorded']
+        fields = ['student', 'student_name','subject_name','mark','grade_letter','date_recorded']
+
+    def get_student_name(self, obj):
+        return str(obj.student)
 
     def get_subject_name(self, obj):
         return str(obj.subject)
@@ -33,9 +37,7 @@ class MarkSerializer(serializers.ModelSerializer):
         for i in range(len(lowerGradeBounds)-1):
             if (score > lowerGradeBounds[i]):
                 return (gradeLetters[i])
-        
-        
-
+                
 # the difference between ModelSerializer and HyperlinkedModelSerializer
 
 # Notice that we're using hyperlinked relations in this case with HyperlinkedModelSerializer. You can also use primary key and various other relationships, but hyperlinking is good RESTful design.class 

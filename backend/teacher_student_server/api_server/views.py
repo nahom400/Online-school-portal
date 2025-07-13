@@ -1,5 +1,7 @@
 from operator import truediv
-from .models import Mark, Teacher, Student
+
+from django.db.models import QuerySet
+from .models import Mark, Subject, Teacher, Student
 from django.http import JsonResponse, Http404
 from rest_framework import permissions, viewsets, response
 from rest_framework.response import Response
@@ -101,4 +103,26 @@ def get_all_scores(request):
     return Response(scores_serializer.data)
     # except:
         # return Response({'error':"Unauthorized; you'll need a valid username, role and token"})
+@api_view(['GET'])
+def get_all_students(request):
+    req = request.GET
+    if not (req['token'] and (req['username'] and req['role'])):
+        return JsonResponse({'error':"you're required to input username, role and token"})
+    # try:
+    teacher = Teacher.objects.get(username=req['username'], token=req['token'])
+    print("I am the bug 1")
+    print(teacher)
+    subjects = Subject.objects.filter(teacher=teacher)
+    print("I am the bug 3")
+    
+    if subjects:
+        scores_data_list = []
+        for subject in subjects:
+            subject_filtered_marks = Mark.objects.filter(subject=subject)
+            print(MarkSerializer(subject_filtered_marks, many=True).data)
+            scores_data_list.append(MarkSerializer(subject_filtered_marks, many=True).data)
+        print("I am the bug 5")
+        return Response(scores_data_list)
 
+    elif not subjects:
+        return Response({'error':"No subjects found for teacher!"})

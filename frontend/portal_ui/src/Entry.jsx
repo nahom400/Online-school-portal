@@ -1,6 +1,8 @@
 import { useState } from "react";
 import useSWR from 'swr';
 import StudentDashboard from "./components/StudentDashboard";
+ import TeacherDashboard from "./components/TeacherDashboard";
+
 
 
 const fetcher = (...args) => fetch(...args).then((res)=>res.json())
@@ -27,7 +29,11 @@ function Entry({logOut, username, token, role}){
 			</div>
 			<div>
 				<div>
+					{ role==='student' ?
 					<StudentDashboard token={token} username={username}/>
+					:
+					<TeacherDashboard token={token} username={username}/>
+					}
 		 		</div>
 		 	</div>
 		 	{/*<div className="header fw-bolder">

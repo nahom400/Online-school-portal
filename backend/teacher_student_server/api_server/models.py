@@ -40,6 +40,9 @@ class Teacher(models.Model):
     def __str__(self):
         return f'{self.firstname} {self.lastname}'
 
+    def get_id(self):
+        return self.id
+
 class Subject(models.Model):
     name = models.CharField(max_length=100)
 

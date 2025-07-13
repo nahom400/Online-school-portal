@@ -30,12 +30,12 @@ function App(){
 	function logOut(){
 		localStorage.removeItem("ACCESS_TOKEN") //All localStorage keys get removed
 		localStorage.removeItem("USER_NAME")
-		localStorage.removeItem("ROLE")
+		// localStorage.removeItem("ROLE") // comment this out to remember role for logins
 		setMyToken(null) //ensures that the user comes to the login page
 		setFullUrl(null) // we must set full url to null otherwise if the user tries to relogin without reloading the page; he/she fails because afterall the fullurl won't change so SWR will not be fired again for the same state!
 	}
 
-	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
+	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher, {revalidateIfStale:false})
 	useEffect( ()=>
 		{
 			
