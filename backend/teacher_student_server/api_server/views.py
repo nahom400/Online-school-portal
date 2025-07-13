@@ -7,7 +7,7 @@ from rest_framework import permissions, viewsets, response
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import string
-from .serializers import TeacherSerializer, StudentSerializer, MarkSerializer
+from .serializers import TeacherSerializer, StudentSerializer, MarkSerializer, SubjectSerializer
 
 class StudentViewSet(viewsets.ModelViewSet):
     """
@@ -114,14 +114,18 @@ def get_all_students(request):
     print(teacher)
     subjects = Subject.objects.filter(teacher=teacher)
     print("I am the bug 3")
-    
     if subjects:
-        scores_data_list = []
+        meta_data = {'subjects': SubjectSerializer(subjects, many=True).data}
+        entries_data = []
+        scores_data_list = [meta_data]
+        del meta_data
         for subject in subjects:
             subject_filtered_marks = Mark.objects.filter(subject=subject)
-            print(MarkSerializer(subject_filtered_marks, many=True).data)
-            scores_data_list.append(MarkSerializer(subject_filtered_marks, many=True).data)
-        print("I am the bug 5")
+            entries = MarkSerializer(subject_filtered_marks, many=True).data
+            for entry in entries:
+                entries_data.append(entry)
+
+        scores_data_list.append(entries_data)
         return Response(scores_data_list)
 
     elif not subjects:

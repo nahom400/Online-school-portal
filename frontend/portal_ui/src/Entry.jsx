@@ -19,7 +19,7 @@ function Entry({logOut, username, token, role}){
 				<nav>
 					<div>
 						<div>
-				 			<p>Welcome : {username} <br/>{role} marking</p>
+				 			<h4>Welcome : {username} <br/>{role} marking</h4>
 			 			</div>
 					</div>
 					<div>

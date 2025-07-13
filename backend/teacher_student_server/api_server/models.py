@@ -68,3 +68,5 @@ class Mark(models.Model):
 
 def set_token(user_id):
     pass
+
+# class Grading(model.Model):

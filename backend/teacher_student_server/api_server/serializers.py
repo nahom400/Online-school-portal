@@ -37,7 +37,12 @@ class MarkSerializer(serializers.ModelSerializer):
         for i in range(len(lowerGradeBounds)-1):
             if (score > lowerGradeBounds[i]):
                 return (gradeLetters[i])
-                
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ['name', 'teacher']
+
 # the difference between ModelSerializer and HyperlinkedModelSerializer
 
 # Notice that we're using hyperlinked relations in this case with HyperlinkedModelSerializer. You can also use primary key and various other relationships, but hyperlinking is good RESTful design.class 

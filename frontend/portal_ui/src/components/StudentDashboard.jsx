@@ -43,7 +43,7 @@ function StudentDashboard({username, token}){
 					</tr>
 					<tr>
 					<th>Recorded</th>
-					{response.map((subject)=>(<th>{subject.date_recorded}</th>))}
+					{response.map((subject)=>(<th><em className="text-muted text-opacity-50 text">{subject.date_recorded}</em></th>))}
 					</tr>
 				</tbody>
 			</table>
