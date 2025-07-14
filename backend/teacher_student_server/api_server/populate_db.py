@@ -11,9 +11,9 @@ tokens = [
 	)) for _ in range(100)] 
 
 
-first_names = ['Alice', 'Bob', 'Charlie', 'Daisy', 'Eve', 'Frank', 'Grace', 'Hank', 'Ivy', 'Jake']
-last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Lee']
-subjects_list = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History', 'Geography', 'Art', 'Music', 'PE']
+first_names = ['Alice', 'Bob', 'Charlie','Loyd','Troy','Dennis','Selina','Sara','Jay', 'Joe', 'Freddy', 'David', 'James', 'Brown', 'Bob' , 'Daisy', 'Eve', 'Edward' ,'Kenway' ,'Frank', 'Grace', 'Hank', 'Ivy', 'Jake']
+last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Lee','Douglas', 'Grifith','Ludao', 'Edward', 'Kenway']
+subjects_list = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History', 'Geography', 'Art', 'Music', 'PE', 'Anthropology', 'Inclusive']
 
 
 # Create teachers
@@ -25,7 +25,7 @@ teachers = [
         token=random.choice(tokens),
         lastname=random.choice(last_names),
         email=f"teacher{i}@school.com"
-    ) for i in range(10)
+    ) for i in range(7)
 ]
 
 # Create subjects
@@ -33,7 +33,7 @@ subjects = [
     Subject.objects.create(
         name=subjects_list[i],
         teacher=random.choice(teachers)
-    ) for i in range(10)
+    ) for i in range(12)
 ]
 
 # Create students
@@ -46,12 +46,12 @@ students = [
         token=random.choice(tokens),
         email=f"student{i}@school.com",
         date_of_birth=date(2008 + i % 5, 1 + (i % 12), 1 + (i % 28))  # Dates between 2008–2012
-    ) for i in range(10)
+    ) for i in range(40)
 ]
 
 # Create marks (unique student-subject pairs)
 created_pair = set()
-while len(created_pair) < 100:
+while len(created_pair) < ((480)):
     student = random.choice(students)
     subject = random.choice(subjects)
     key = (student.id, subject.id)

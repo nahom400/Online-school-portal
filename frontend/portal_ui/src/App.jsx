@@ -15,7 +15,7 @@ function App(){
 	const [myToken, setMyToken] = useState(localStorage.getItem('ACCESS_TOKEN')) // if this value is non-null our website renders the entry page
 	const [fullUrl, setFullUrl] = useState(null) // whenever this changes our SWR fetches authentication from database 
 
-	// function fired when we submit the form: role, username and password
+	// function fired when we submit the form: role, username and pfsassword
 	function signInAction(formData){ 
 		const role = formData.get('role_selector')
 		const username = formData.get('username')

@@ -20,7 +20,6 @@ function TeacherDashboard({username, token}){
 	)
 	
 	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
-	const fed = {'gff':null, 'giff':null, 'gasf':null, 'gwa':null, }
 
 	if (response){
 		// Code explanation for this 
@@ -28,10 +27,12 @@ function TeacherDashboard({username, token}){
 		// response returns an array that looks like [[subjects_meta_data_as_a_dictionaries],[entries_that_are_for_each_student-subject_pairs so if there are two subjects and 20 students their are 80 entries]]
 
 		const subjects = response[0]['subjects']
-		const students = new Set()
+		let students = new Set()
 		response[1].map((entry)=>{
 			students.add(entry.student_name)
 		})
+		students = Array.from(students).sort()
+		console.log(response)
 		// console.log(students)
 		// console.log(subjects)
 		
@@ -41,9 +42,10 @@ function TeacherDashboard({username, token}){
 				<div className="d-flex gap-1 m-3">
 					<button className="btn btn-primary" 
 						onClick={()=>(setEditMode((prev)=>(!prev)))}>
-						{editMode ? "Upload" : "Edit"}
+						{editMode ? "Save to DB" : "Edit"}
 					</button>
-					<button className="btn btn-info">Refresh</button>
+					<button className="btn btn-primary">Refresh</button>
+					{editMode ? <button className="btn btn-lg" aria-description="choose .xslx file">Link with a spreadsheet</button> : null}
 				</div>
 			</div>
 			<form>
@@ -57,7 +59,7 @@ function TeacherDashboard({username, token}){
 					<tbody>
 						{ Array.from(students).map((student) =>{
 							const student_marks = response[1].filter((entry)=>(entry.student_name === student))
-							console.log(student_marks)
+
 							return (
 								<tr>
 									<th>{student}</th>

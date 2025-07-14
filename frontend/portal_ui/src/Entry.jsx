@@ -14,7 +14,7 @@ function Entry({logOut, username, token, role}){
 	const {data, error, isValidating} = useSWR("")
 
 	return (<>
-		<div className="Entry bg-gradient ">
+		<div className="Entry">
 			<div className="bg-primary-subtle">
 				<nav>
 					<div>
@@ -27,7 +27,7 @@ function Entry({logOut, username, token, role}){
 					</div>
 				</nav>
 			</div>
-			<div>
+			<div className="container-md">
 				<div>
 					{ role==='student' ?
 					<StudentDashboard token={token} username={username}/>
