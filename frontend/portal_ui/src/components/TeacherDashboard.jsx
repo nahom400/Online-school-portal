@@ -31,9 +31,11 @@ function TeacherDashboard({username, token}){
 
 		const subjects = response[0]['subjects']
 		let students = new Set()
-		response[1].map((entry)=>{
-			const student_name = entry.split(':')[0]
-			students.add()
+		const allEntries = Object.entries(response[1])
+
+		allEntries.map((entry)=>{
+			const student_name = entry[0].split(':')[0]
+			students.add(student_name)
 		})
 		students = Array.from(students).sort()
 
@@ -91,7 +93,7 @@ function TeacherDashboard({username, token}){
 					{editMode ? <button className="btn btn-lg" aria-description="choose .xslx file">Link with a spreadsheet</button> : null}
 				</div>
 			</div>
-			
+			{/*Rendering starts here*/}
 				<table id="table" className="table table-striped table-bordered table-hover flex-wrap" >
 					<thead className="table-dark">
 						<tr>
@@ -101,16 +103,15 @@ function TeacherDashboard({username, token}){
 					</thead>
 					<tbody>
 						{ students.map((student) =>{
-							const studentEntries = response[1].filter((entry)=>(entry.split(':')[0] === student))
-							const studentEntryKeys = Object.keys(studentEntries)
+							const studentEntries = allEntries.filter((entry)=>(entry[0].split(':')[0] === student))
 
 							return (
 								<tr>
 									<th>{student}</th>
 									{
-									studentEntries.map((studentMark, index) => 
+									studentEntries.map((entry, index) => 
 										(<th>
-											<input name={studentEntryKeys[index]} className="text-black border-0 bg-transparent w-auto" type="text" defaultValue={studentMark} readOnly={!editMode}/>
+											<input name={entry[0]} className="text-black border-0 bg-transparent w-auto" type="text" defaultValue={entry[1]} readOnly={!editMode}/>
 										</th> ))
 									}
 								</tr>
