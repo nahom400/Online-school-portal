@@ -32,11 +32,10 @@ function TeacherDashboard({username, token}){
 		const subjects = response[0]['subjects']
 		let students = new Set()
 		response[1].map((entry)=>{
-			students.add(entry.student_name)
+			const student_name = entry.split(':')[0]
+			students.add()
 		})
 		students = Array.from(students).sort()
-		// console.log(students)
-		// console.log(subjects)
 
 		function getChangedFields(oldData, newData){
 			const changed = {}
@@ -101,16 +100,17 @@ function TeacherDashboard({username, token}){
 						</tr>
 					</thead>
 					<tbody>
-						{ Array.from(students).map((student) =>{
-							const student_marks = response[1].filter((entry)=>(entry.student_name === student))
+						{ students.map((student) =>{
+							const studentEntries = response[1].filter((entry)=>(entry.split(':')[0] === student))
+							const studentEntryKeys = Object.keys(studentEntries)
 
 							return (
 								<tr>
 									<th>{student}</th>
 									{
-									student_marks.map((studentMark) => 
+									studentEntries.map((studentMark, index) => 
 										(<th>
-											<input name={student+':'+studentMark.subject_name} className="text-black border-0 bg-transparent w-auto" type="text" defaultValue={studentMark.mark} readOnly={!editMode}/>
+											<input name={studentEntryKeys[index]} className="text-black border-0 bg-transparent w-auto" type="text" defaultValue={studentMark} readOnly={!editMode}/>
 										</th> ))
 									}
 								</tr>

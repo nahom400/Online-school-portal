@@ -110,20 +110,19 @@ def get_all_students(request):
         return JsonResponse({'error':"you're required to input username, role and token"})
     # try:
     teacher = Teacher.objects.get(username=req['username'], token=req['token'])
-    print("I am the bug 1")
-    print(teacher)
     subjects = Subject.objects.filter(teacher=teacher)
-    print("I am the bug 3")
     if subjects:
         meta_data = {'subjects': SubjectSerializer(subjects, many=True).data}
-        entries_data = []
+        entries_data = {}
         scores_data_list = [meta_data]
         del meta_data
         for subject in subjects:
             subject_filtered_marks = Mark.objects.filter(subject=subject)
             entries = MarkSerializer(subject_filtered_marks, many=True).data
             for entry in entries:
-                entries_data.append(entry)
+                student_name = entry['student_name']
+                subject_name = entry['subject_name']
+                entries_data[student_name+':'+subject_name]=entry['mark']
 
         scores_data_list.append(entries_data)
         return Response(scores_data_list)
