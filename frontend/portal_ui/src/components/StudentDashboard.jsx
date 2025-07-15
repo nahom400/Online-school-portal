@@ -29,22 +29,25 @@ function StudentDashboard({username, token}){
 				<thead className="table-dark">
 					<tr>
 					<th>Subject</th>
-					{response.map((subject)=>(<th>{subject.subject_name}</th>))}
+					<th>Score</th>
+					<th>Grade</th>
+					<th>Recorded</th>
+					{/*{response.map((subject)=>(<th>{subject.subject_name}</th>))}*/}
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-					<th>Score</th>
-					{response.map((subject)=>(<th>{subject.mark}</th>))}
-					</tr>
-					<tr>
-					<th>Grade</th>
-					{response.map((subject)=>(<th>{subject.grade_letter}</th>))}
-					</tr>
-					<tr>
-					<th>Recorded</th>
-					{response.map((subject)=>(<th><em className="text-muted text-opacity-50 text">{subject.date_recorded}</em></th>))}
-					</tr>
+					{ response.map((entry)=>{
+						const keys = ['subject_name','mark','grade_letter','date_recorded']
+							return (<tr>
+								{	keys.map((key)=>(
+									<td>{entry[key]}</td>
+									))
+								}
+							</tr>
+							)
+						})
+					
+					}
 				</tbody>
 			</table>
 		</div>)
