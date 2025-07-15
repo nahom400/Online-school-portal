@@ -1,12 +1,11 @@
 # pdf_viewer/models.py
-from enum import unique
 from django.db import models
 from django.db.models.fields import related
 from django.forms import CharField
 
 TOKEN_DURATION = 72 #hours (3 days)
-
 class Student(models.Model):
+
     # Student credentials data
     username = models.CharField(max_length=20)
     password = models.CharField(null=True, max_length=30)
@@ -65,8 +64,5 @@ class Mark(models.Model):
 
     def __str__(self):
         return f'{self.student} - {self.subject}: {self.mark}'
-
-def set_token(user_id):
-    pass
 
 # class Grading(model.Model):

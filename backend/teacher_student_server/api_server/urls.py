@@ -11,11 +11,6 @@ router = DefaultRouter()
 
 
 urlpatterns = [
-    # path('hello/', hello_api),
-    # path('pdfdb/<int:pk>/', serve_pdf_from_db),
-    # path('get_book/<int:pk>/', get_book),
-    # path('get_all_books/', get_all_books),
-    # path('get_all_blogs/', get_all_blogs),
     path('get_token/', get_token),
     path('validate_token/', validate_token),
     path('get_all_scores/', get_all_scores),

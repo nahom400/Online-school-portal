@@ -20,7 +20,6 @@ function StudentDashboard({username, token}){
 	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
 	
 	if (response){
-		console.log(response)
 		// const response = response.map(({subject_name, mark, date_recorded})=>({subject_name, mark, date_recorded, }))
 		// console.log(scores)
 		return (<div className="container-md flex-wrap">

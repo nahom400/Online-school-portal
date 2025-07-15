@@ -55,7 +55,6 @@ function TeacherDashboard({username, token}){
 			return changed
 		}
 		function submit(formData){
-			console.log("ACTED")
 			const newData = Object.fromEntries(formData.entries())
 			const changedData = (getChangedFields(oldData, newData))
 			oldData = newData // update the old data for future reference
@@ -73,10 +72,7 @@ function TeacherDashboard({username, token}){
 				const data = Object.fromEntries(formData.entries())
 				oldData = data
 			}
-			(setEditMode((prev)=>{
-				if (prev === true){
-					console.log("acted")
-				}	
+			(setEditMode((prev)=>{	
 				return !prev
 			}))
 

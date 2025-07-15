@@ -73,20 +73,46 @@ def get_token(request):
 		teachers = TeacherSerializer(Teacher.objects.all(), many=True).data
 		for teacher in teachers:
 			if (teacher['username'] == credentials['username']):
-				if (teacher['password'] == credentials['password']):
-					echo = credentials.copy()
-					echo.pop('password')
-					return JsonResponse({'token':teacher['token'], 'error':None, 'echo':echo})
+				try:
+					if (teacher['password'] == credentials['password']):
+						echo = teacher
+						echo.pop('password')
+						echo['role'] = "teacher"
+						return JsonResponse({'echo':echo, 'error':None,})
+				except:
+					pass
+				try:
+					if (teacher['token'] == credentials['token']):
+						echo = teacher
+						echo.pop('password')
+						echo.pop('token')
+						echo['role'] = "teacher"
+						return JsonResponse({'echo':echo, 'error':None,})
+				except:
+					pass
 		return JsonResponse({'error':"Username and/or password is wrong!", 'token':None})
 
 	if credentials['role'] == 'student':
 		students = StudentSerializer(Student.objects.all(), many=True).data
 		for student in students:
-			if (student['firstname'] == credentials['username']):
-				if (student['password'] == credentials['password']):
-					echo = credentials.copy()
-					echo.pop('password')
-					return JsonResponse({'token':student['token'], 'error':None, 'echo':echo})
+			if (student['username'] == credentials['username']):
+				try:
+					if (student['password'] == credentials['password']):
+						echo = student
+						echo.pop('password')
+						echo['role'] = "student"
+						return JsonResponse({'echo':echo, 'error':None,})
+				except:
+					pass
+				try:
+					if (student['token'] == credentials['token']):
+						echo = student
+						echo.pop('password')
+						echo.pop('token')
+						echo['role'] = "student"
+						return JsonResponse({'echo':echo, 'error':None,})
+				except:
+					pass
 		return JsonResponse({'error':"Username and/or password is wrong!", 'token':None, })
 	return JsonResponse({"error":'nothing really worked', 'token':None})
 
@@ -97,12 +123,11 @@ def get_all_scores(request):
 	if not (req['token'] and (req['username'] and req['role'])):
 		return JsonResponse({'error':"you're required to input username, role and token"})
 	# try:
-	student = Student.objects.get(firstname=req['username'], token=req['token'])
+	student = Student.objects.get(username=req['username'], token=req['token'])
 	scores_data = Mark.objects.filter(student=student)
 	scores_serializer = MarkSerializer(scores_data, many=True)
 	return Response(scores_serializer.data)
-	# except:
-		# return Response({'error':"Unauthorized; you'll need a valid username, role and token"})
+
 @api_view(['GET'])
 def get_all_students(request):
 	req = request.GET
