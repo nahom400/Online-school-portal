@@ -114,7 +114,7 @@ function App(){
 			{ userValidated ? <Entry 	role={localStorage.getItem('ROLE')}
 								token={myToken}
 							 	username={localStorage.getItem("USER_NAME")}
-								profile_data={responseData.echo}
+								profileData={responseData.echo}
 							 	logOut={logOut}/> :  
 							 	<SignBox signInAction={signInAction}/>
 							 }

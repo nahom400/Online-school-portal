@@ -10,7 +10,7 @@ const fetcher = (...args) => fetch(...args).then((res)=>res.json())
 const BASE_URL = "http://127.0.0.1:8000/"
 const REQUEST_URL = "users/"
 
-function Entry({logOut, username, token, role}){
+function Entry({logOut, username, token, role, profileData}){
 	const {data, error, isValidating} = useSWR("")
 
 	return (
@@ -30,9 +30,9 @@ function Entry({logOut, username, token, role}){
 			<div>
 				<div>
 					{ role==='student' ?
-					<StudentDashboard token={token} username={username}/>
+					<StudentDashboard token={token} username={username} profileData={profileData}/>
 					:
-					<TeacherDashboard token={token} username={username}/>
+					<TeacherDashboard token={token} username={username} profileData={profileData}/>
 					}
 		 		</div>
 		 	</div>

@@ -115,7 +115,7 @@ function TeacherDashboard({username, token}){
 									{
 									studentEntries.map((entry, index) => 
 										(<th>
-											<input name={entry[0]} className="text-black border-0 bg-transparent w-auto" type="text" defaultValue={entry[1]} readOnly={!editMode}/>
+											<input name={entry[0]} className="btn btn-lg" type="text" defaultValue={entry[1]} disabled={!editMode}/>
 										</th> ))
 									}
 								</tr>
