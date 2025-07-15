@@ -23,7 +23,7 @@ function Entry({logOut, username, token, role}){
 			 			</div>
 					</div>
 					<div>
-						<button className="btn btn-primary" onClick={logOut}>Logout</button>
+						<button className="btn btn-lg" onClick={logOut}>Logout</button>
 					</div>
 				</nav>
 			</div>

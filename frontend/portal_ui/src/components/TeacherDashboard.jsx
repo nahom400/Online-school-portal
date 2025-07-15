@@ -3,12 +3,14 @@ import useSWR from 'swr'
 const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
 const BASE_URL = "http://127.0.0.1:8000/"
 const REQUEST_URL = "auth/get_all_students/"
+const UPLOAD_URL = "auth/post_all/"
 
 let oldData = {}
 
 function TeacherDashboard({username, token}){
 	const [fullUrl, setFullUrl] = useState(null)
 	const [editMode, setEditMode] = useState(false)  // to set edit mode.
+	const [postUrl, setPostUrl] = useState(null)
 	const formRef = useRef(null)
 
 	useEffect(()=>{
@@ -16,22 +18,24 @@ function TeacherDashboard({username, token}){
 			username,
 			token,
 			role:'teacher',
+			editMode
 		})
 		setFullUrl(BASE_URL + REQUEST_URL +'?'+ params.toString())
-	}
+	},
+	[editMode]
 	)
 
 
-	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher,{revalidateOnFocus:false, revalidateOnReconnect:false})
-
-	if (response){
+	const {data : getResponse, isValidating, error} = useSWR(fullUrl, fetcher,{revalidateOnFocus:false, revalidateOnReconnect:false})
+	const {data: postResponse, isValidating:saving, error:errorSaving} = useSWR(postUrl, fetcher,{revalidateOnFocus:false, revalidateOnReconnect:false})
+	if (getResponse){
 		// Code explanation for this 
-		// i either need to simplify the response from backend or heavily comment this block!! It's approaches machine code -LOL!!
-		// response returns an array that looks like [[subjects_meta_data_as_a_dictionaries],[entries_that_are_for_each_student-subject_pairs so if there are two subjects and 20 students their are 80 entries]]
+		// i either need to simplify the getResponse from backend or heavily comment this block!! It's approaches machine code -LOL!!
+		// getResponse returns an array that looks like [[subjects_meta_data_as_a_dictionaries],[entries_that_are_for_each_student-subject_pairs so if there are two subjects and 20 students their are 80 entries]]
 
-		const subjects = response[0]['subjects']
+		const subjects = getResponse[0]['subjects']
 		let students = new Set()
-		const allEntries = Object.entries(response[1])
+		const allEntries = Object.entries(getResponse[1])
 
 		allEntries.map((entry)=>{
 			const student_name = entry[0].split(':')[0]
@@ -53,8 +57,12 @@ function TeacherDashboard({username, token}){
 		function submit(formData){
 			console.log("ACTED")
 			const newData = Object.fromEntries(formData.entries())
-			console.log(getChangedFields(oldData, newData))
+			const changedData = (getChangedFields(oldData, newData))
 			oldData = newData // update the old data for future reference
+			const params = new URLSearchParams(
+				changedData
+				)
+			setPostUrl(BASE_URL+UPLOAD_URL+'?'+params.toString())
 		}
 
 		function toggleEditMode(){
@@ -123,6 +131,12 @@ function TeacherDashboard({username, token}){
 					</tbody>
 				</table>
 			</form>
+			{ saving ? <div className='position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75' style={{'z-index':1050}}>
+				<div className="spinner-border">
+					<span className="visually-hidden">Loading...</span>
+				</div>
+			</div>:null
+			}
 		</div>)
 	}
 

@@ -59,7 +59,7 @@ while len(created_pair) < ((480)):
         Mark.objects.create(
             student=student,
             subject=subject,
-            mark=round(random.uniform(50, 100), 2)
+            mark=round(random.randint(50, 100), 2)
         )
         created_pair.add(key)
 

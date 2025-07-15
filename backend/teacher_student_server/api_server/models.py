@@ -9,8 +9,8 @@ TOKEN_DURATION = 72 #hours (3 days)
 class Student(models.Model):
     # Student credentials data
     username = models.CharField(max_length=20)
-    password = models.CharField(null=True)
-    token = models.CharField(null=True)
+    password = models.CharField(null=True, max_length=30)
+    token = models.CharField(null=True, max_length=30)
 
     # Student identity information
     firstname = models.CharField(max_length=20, null=True)
@@ -28,8 +28,8 @@ class Teacher(models.Model):
 
     # Teacher cmodels.redentials data
     username = models.CharField(max_length=20, null=True)
-    password = models.CharField(null=True)
-    token = models.CharField(null=True)
+    password = models.CharField(null=True, max_length=30)
+    token = models.CharField(null=True, max_length=30)
 
     # Teacher identity data
     firstname = models.CharField(max_length=50, null=True)
