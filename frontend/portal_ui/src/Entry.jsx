@@ -13,7 +13,7 @@ const REQUEST_URL = "users/"
 function Entry({logOut, username, token, role}){
 	const {data, error, isValidating} = useSWR("")
 
-	return (<>
+	return (
 		<div className="Entry">
 			<div className="bg-primary-subtle">
 				<nav>
@@ -27,7 +27,7 @@ function Entry({logOut, username, token, role}){
 					</div>
 				</nav>
 			</div>
-			<div className="container-md">
+			<div>
 				<div>
 					{ role==='student' ?
 					<StudentDashboard token={token} username={username}/>
@@ -51,7 +51,7 @@ function Entry({logOut, username, token, role}){
 		 		</div>
 		 	</div>*/}
 		 </div> 
-	</>)
+	)
 }
 
 export default Entry;

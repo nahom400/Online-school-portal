@@ -20,6 +20,7 @@ class Student(models.Model):
     #teachers_assigned_to = models.ListField()
     #subjects = models.DictField()
 
+
     def __str__(self):
         return f'{self.firstname} {self.lastname}'
 

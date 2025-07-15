@@ -94,7 +94,7 @@ function TeacherDashboard({username, token}){
 						onClick={toggleEditMode} />
 					
 					<button type="button" className="btn btn-primary">Refresh</button>
-					{editMode ? <button className="btn btn-lg" aria-description="choose .xslx file">Link with a spreadsheet</button> : null}
+					{editMode ? <button className="btn btn-lg" aria-description="Choose .xslx file">Link with a spreadsheet</button> : null}
 				</div>
 			</div>
 			{/*Rendering starts here*/}

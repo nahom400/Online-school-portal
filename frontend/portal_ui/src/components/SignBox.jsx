@@ -19,9 +19,6 @@ function SignBox({signInAction, isValidating, error}){
 				
 			</label><input name="password" className="input" type="password" /></div>
 				<div className="d-flex gap-2 justify-content-around align-items-center"></div>
-			
-			
-			
 			<button className="btn btn-primary"> Log-in </button>
 			{/*<button className="btn btn-secondary" disabled>Admission</button>*/}
 			</div>

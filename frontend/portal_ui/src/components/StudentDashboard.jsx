@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react"
 import useSWR from 'swr'
+import Scores from './Scores'
+import Profile from "./Profile"
 const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
 const BASE_URL = "http://127.0.0.1:8000/"
 const REQUEST_URL = "auth/get_all_scores/"
 
+
 function StudentDashboard({username, token}){
 	const [fullUrl, setFullUrl] = useState(null)
+	const [page, setPage] = useState('profile')
+
 	useEffect(()=>{
 		const params = new URLSearchParams({
 			username,
@@ -18,42 +23,29 @@ function StudentDashboard({username, token}){
 	)
 	
 	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
+
 	
 	if (response){
 		// const response = response.map(({subject_name, mark, date_recorded})=>({subject_name, mark, date_recorded, }))
 		// console.log(scores)
-		return (<div className="container-md flex-wrap">
-			<h1>Scores</h1>
-			<table className="table table-striped table-bordered table-hover flex-wrap" >
-				<thead className="table-dark">
-					<tr>
-					<th>Subject</th>
-					<th>Score</th>
-					<th>Grade</th>
-					<th>Recorded</th>
-					{/*{response.map((subject)=>(<th>{subject.subject_name}</th>))}*/}
-					</tr>
-				</thead>
-				<tbody>
-					{ response.map((entry)=>{
-						const keys = ['subject_name','mark','grade_letter','date_recorded']
-							return (<tr>
-								{	keys.map((key)=>(
-									<td>{entry[key]}</td>
-									))
-								}
-							</tr>
-							)
-						})
-					
-					}
-				</tbody>
-			</table>
-		</div>)
+		return (<div className="d-flex gap-2">
+				<div className="d-flex flex-column align-items-start">
+					<button className="btn btn-lg" onClick={()=>(setPage('profile'))}>Profile</button>
+					<button className="btn btn-lg">What's on the table?</button>
+					<button className="btn btn-lg" onClick={()=>(setPage('scores'))}>Scores</button>
+					<button className="btn btn-lg">Help</button>
+				</div>
+				{ page === 'profile' ? <Profile response={response}/> : null }
+				{ page === 'scores' ? <Scores response={response}/> : null }
+				{ page === 'table' ? <Scores response={response}/> : null }
+				{ page === 'help' ? <Scores response={response}/> : null }
+		</div>
+		)
 	}
 
 	if (isValidating) {return (<div className="spinner-border">
 		<span className="visually-hidden">Loading...</span>
 	</div>)}
 }
+
 export default StudentDashboard;
