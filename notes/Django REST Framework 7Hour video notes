@@ -1,0 +1,19 @@
+Django REST Framework 7Hour video notes
+
+endpt = "https://github.com" # for example this is not an API for it returns an html page document.
+
+what api is is :
+
+we use import requests in python
+to access the api inside of the responses.
+the library itself gives you its API to let you work with API's (LOL)!
+
+import requests
+requests.get() <== an API 
+
+API = application programming interface.
+
+Phone has camera. the Camera has API. every app that uses the camera or tweaks it uses the API to grab the data.
+
+web api == http request (there are internetless web apis)
+RESt API responses are most of the time json responses
