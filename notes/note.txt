@@ -1,0 +1,12 @@
+Now the system must upgrade! A lot!
+
+Here are the major changes we need 
+	- incorporate viewsets in the restframework backend
+	- use react-router to separate pages! login for student and teacher should be way different!
+	- improve the dashboard! It must have sidebar! It should never show the scores at startup but shows the profile, and maybe some home works and class schedules, test schedules ...
+	- improve the authorization system. +usernames and tokens must never match! find a better way of using the tokens! passwords should exist as a hash and salt rather than plain trivial password! may be use django's own user model?
+	- prepare the error handling API of backend well! and the login should have error showing way!
+	+ pip install faker to populate the database again
+	- add a forgotten-password feature!
+	- bring some images: school logo, student profile image or use mock images or some puppets! 
+	- try to reduce code length as much as possible, and increase code readablity as much as possible ::

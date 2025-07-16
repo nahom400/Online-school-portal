@@ -1,0 +1,19 @@
+#gitignore files and directories
+
+# backend files
+venv/
+media/
+__pycache__/
+__init__**
+*.TXT
+*.sqlite**
+
+# frontend files
+
+node_modules
+*.svg
+.env
+eslint.config.js
+
+# notes
+notes

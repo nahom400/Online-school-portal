@@ -1,0 +1,77 @@
+html{
+  height: 100%;
+}
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #dddddd;
+}
+#root{
+  height: 100%;
+  width: 100%;
+}
+#root>div{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Entry{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.Entry>div>div{
+ padding: 10px;
+}
+nav{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+.body{
+  display: flex;
+  background-color: #dddddd;
+}
+.header{
+  border-bottom: solid white;
+}
+.panel-left{
+  background-color: #dddddd;
+  border-right:solid white ;
+  /*margin: 10px;*/
+  /*border-radius: 10px;*/
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 50px 10px 50px;
+
+}
+
+.panel-right{
+  padding: 10px;
+}
+
+.SignBox{
+  background-color: white;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+  border: solid black;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.SignBox input{
+  margin-left: 10px;
+  border: none;
+  background-color: #cccccc;
+  border-radius: 5px;
+  padding: 10px;
+}
