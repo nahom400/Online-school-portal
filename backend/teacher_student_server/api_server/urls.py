@@ -2,6 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import get_token, validate_token, get_all_scores, get_all_students, post_grades
+from . views import TeacherMarkListView, StudentMarkListView
 
 # Create a router and register our viewset with it.
 router = DefaultRouter()
@@ -13,7 +14,8 @@ router = DefaultRouter()
 urlpatterns = [
     path('get_token/', get_token),
     path('validate_token/', validate_token),
-    path('get_all_scores/', get_all_scores),
+    path('Marks/teacher/<str:username>/', TeacherMarkListView.as_view()),
+    path('Marks/student/<str:username>/', StudentMarkListView.as_view()),
     path('get_all_students/', get_all_students),
     path('post_all/', post_grades)
 ]

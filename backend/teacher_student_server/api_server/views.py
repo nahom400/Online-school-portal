@@ -1,49 +1,32 @@
 from operator import truediv
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, query
 from .models import Mark, Subject, Teacher, Student
 from django.http import JsonResponse, Http404
-from rest_framework import permissions, viewsets, response
+from rest_framework import permissions, serializers, viewsets, response
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import generics
 import string
 from .serializers import TeacherSerializer, StudentSerializer, MarkSerializer, SubjectSerializer
 
-class StudentViewSet(viewsets.ModelViewSet):
-	"""
-	API
-	This provides the concise better way to implement POST and GET at the same time!
-
-	Both to  view and edit !
-	it may be that we call something like 
-	UserViewSet.create
-	UserViewSet.read
-	UserViewSet.update
-	UserViewSet.delete
-
-	in our python function definitions: to connect them to the url paths
-
-	Edit: we actually have a submodule in rest_framework called router which handles every thing without us writing a single line of url!!!!
-
-	if you want more control over the urls you can revert back to using regular clas based views, then writing the url confs explicitly
-
-	we write the url rest_framework_routing to the main urls.py file instead of the app
-	"""
-	queryset = Student.objects.all()
-	serializer_class = StudentSerializer
-
-class TeacherViewSet(viewsets.ModelViewSet):
-
-	"""
-	Same story here
-	"""
-	queryset = Teacher.objects.all()
-	serializer_class = TeacherSerializer
-class MarkViewSet (viewsets.ModelViewSet):
-
-	queryset = Mark.objects.all()
+class TeacherMarkListView(generics.ListAPIView):
 	serializer_class = MarkSerializer
 
+	def get_queryset(self, **kwargs):
+		username = self.kwargs['username']
+		# t = Teacher.objects.filter(username=pk).first()
+		# s = Subject.objects.filter(teacher=t).first()
+		# subject = Subject.objects.filter(teacher = teacher)
+		return Mark.objects.filter(subject__teacher__username=username)
+				
+class StudentMarkListView(generics.ListAPIView):
+	serializer_class = MarkSerializer
+
+	def get_queryset(self, **kwargs):
+		username = self.kwargs['username']
+
+		return Mark.objects.filter(student__username=username)
 
 def validate_token(request):
 	for user in Users:
