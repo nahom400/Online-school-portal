@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
-import Entry from './Entry'
+import Dashboard from './Dashboard'
 import SignBox from './components/SignBox'
 import './styles/bootstrap.min.css'
 import './index.css'
@@ -24,14 +24,11 @@ function App(){
 	
 	
 	/*##################################	
-
 	SIGN IN ACTION TO CREATE A LOGIN-SESSION:
-
 		This block of code is for initiating a login session
 		with user. It authenticates the username and password
 		then saves the token and username to localStorage for 
 		subsequent logins to use to validate and use
-	
 	##################################*/
 	
 
@@ -48,12 +45,10 @@ function App(){
 	}
 		
 		/*##################################	
-		
 		CORE SIGN IN LOGIC DOES THESE:
 			1. CREATING A SESSION
 			2. VALIDATING A SESSION IF EXISTS
 			3. 
-		
 		##################################*/	
 	useEffect( ()=>
 		{
@@ -107,11 +102,8 @@ function App(){
 	}
 
 	return(
-		<div>
-			{/*<h1 class="">This is the portal for Teacherand Students </h1>
-			<p>Please sign-in: if you're a teacher it takes you to the teacher's portal and if you're a student it takes you to the students portal</p>*/}
-
-			{ userValidated ? <Entry 	role={localStorage.getItem('ROLE')}
+		<>
+			{ userValidated ? <Dashboard role={localStorage.getItem('ROLE')}
 								token={myToken}
 							 	username={localStorage.getItem("USER_NAME")}
 								profileData={responseData.echo}
@@ -124,8 +116,7 @@ function App(){
 				</div>
 			</div>:null
 			}
-
-		</div>
+		</>
 		)
 }
 
