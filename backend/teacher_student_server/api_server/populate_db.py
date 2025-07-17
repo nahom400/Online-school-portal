@@ -8,7 +8,7 @@ fake = Faker()
 def generate_token():
     return hashlib.sha256(fake.uuid4().encode()).hexdigest()[:30]
 
-def run():
+# Run the following code in django shell! I deletes all objects first.
 print("Seeding database...")
 
 NUM_TEACHERS = 7
