@@ -4,6 +4,7 @@ import Dashboard from './Dashboard'
 import SignBox from './components/SignBox'
 import './styles/bootstrap.min.css'
 import './index.css'
+import axios from 'axios'
 
 const BASE_URL = "http://127.0.0.1:8000/"
 const GET_TOKEN_URL = "auth/get_token/"
@@ -11,17 +12,17 @@ const VALIDATE_TOKEN_URL = 'auth/validate_user/'
 
 const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
 
+async function obtainToken(username, password){
+		const res = await axios.post('http://localhost:8000/auth/get_token/',
+			({'username':username, 'password':password}))
+		const token = res.data.token
+		return token
+	}
+
 function App(){
 
-	const [userValidated, setUserValidated] = useState(false)
-	// If localStorage has the value it will not be null
 	const [myToken, setMyToken] = useState(localStorage.getItem('ACCESS_TOKEN')) 
-	// Whenever fullUrl changes our SWR fetches authentication from database 
-	const [fullUrl, setFullUrl] = useState(null) 
-	// useSWR
-	const {data : responseData, isValidating} = useSWR(fullUrl, fetcher, {revalidateIfStale:false})
-
-	
+	const [profileData, setProfileData] = useState(null)
 	
 	/*##################################	
 	SIGN IN ACTION TO CREATE A LOGIN-SESSION:
@@ -32,17 +33,21 @@ function App(){
 	##################################*/
 	
 
-	//Function fired when we submit the username and password
 	function signInAction(formData){ 
 		const role = formData.get('role_selector')
 		const username = formData.get('username')
 		const password = formData.get('password')
 
-		const params = new URLSearchParams({role, username, password})
-		const FULL_URL = BASE_URL + GET_TOKEN_URL + `?` + params.toString() //just for the time being this is the way we are doing the url query. So these are the data that django gets by regex!
-		console.log(FULL_URL)
-		setFullUrl(FULL_URL) // triggers the SWR to fetch 
+		localStorage.setItem("USER_NAME", username)
+		localStorage.setItem("ROLE", role)
+		obtainToken(username, password).then(token=>{
+			localStorage.setItem('ACCESS_TOKEN', token)
+			setMyToken(token)
+		})
+
 	}
+
+
 		
 		/*##################################	
 		CORE SIGN IN LOGIC DOES THESE:
@@ -50,39 +55,20 @@ function App(){
 			2. VALIDATING A SESSION IF EXISTS
 			3. 
 		##################################*/	
-	useEffect( ()=>
-		{
-			
-			if (responseData?.error){
-				console.log(responseData.error)
-			}
-			// Notice responseData is fetched for both initial sign-in and for session!
+	if (myToken){
+		const username = localStorage.getItem('USER_NAME')
+		const role = localStorage.getItem('ROLE')
+		const profileFetch = fetch(`http://localhost:8000/auth/${role}/${username}/`, 
+			{headers:{'Authorization': `Token ${myToken}`}}
+			).then(res => res.json())
+		if (!profileData){
+		profileFetch.then(data=>{
+				setProfileData(data)})
+		}
+		}
 
-			else if (responseData?.echo){
-				if (!myToken){ 
-					localStorage.setItem("ACCESS_TOKEN",responseData.echo.token)
-					localStorage.setItem("USER_NAME",responseData.echo.username)
-					localStorage.setItem("ROLE", responseData.echo.role)
-					setMyToken(responseData.echo.token)
-					// IF THERE'S TOKEN ALREADY WE DON'T NEED TO SET AGAIN!
-				}
-				setUserValidated(true) // EnsureS we go to the entry page!
-			}
-			else if (myToken && !userValidated){
-				console.log("code reached")
-				const role = localStorage.getItem('ROLE')
-				const username = localStorage.getItem('USER_NAME')
-				const token = localStorage.getItem('ACCESS_TOKEN')
-
-				const params = new URLSearchParams({ role, username, token})
-				const FULL_URL = BASE_URL + GET_TOKEN_URL + `?` + params.toString() //just for the time being this is the way we are doing the url query. So these are the data that django gets by regex!
-				console.log(FULL_URL)
-				setFullUrl(FULL_URL)
-			}
-			//SCANS FOR A SESSION
-
-		},[responseData] // This is the dependency to run the function; it means at startup or whenever 'responseData' changes!
-	)
+	
+	
 
 	
 	/*##################################	
@@ -93,31 +79,24 @@ function App(){
 	##################################*/
 	
 	function logOut(){
-		localStorage.removeItem("ACCESS_TOKEN") //All localStorage keys get removed
+		localStorage.removeItem("ACCESS_TOKEN")
 		localStorage.removeItem("USER_NAME")
-		// localStorage.removeItem("ROLE") // COMMENT this out to remember role for logins
-		setMyToken(null) //ensures that the user comes to the login page
-		setFullUrl(null) // we must set full url to null otherwise if the user tries to relogin without reloading the page; he/she fails because afterall the fullurl won't change so SWR will not be fired again for the same state!
+		setMyToken(null)
+		setFullUrl(null) 
 		setUserValidated(false)
+		setProfileData(null)
 	}
 
-	return(
-		<>
-			{ userValidated ? <Dashboard role={localStorage.getItem('ROLE')}
-								token={myToken}
-							 	username={localStorage.getItem("USER_NAME")}
-								profileData={responseData.echo}
-							 	logOut={logOut}/> :  
-							 	<SignBox signInAction={signInAction}/>
-							 }
-			{ isValidating ? <div className='position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75' style={{'z-index':1050}}>
-				<div className="spinner-border">
-					<span className="visually-hidden">Loading...</span>
-				</div>
-			</div>:null
-			}
-		</>
-		)
+	if (profileData){
+		return (<Dashboard profileData={profileData}
+					logOut={logOut}
+					token={myToken}
+					/>)
+	}
+
+	else if (!profileData){
+		return (<SignBox signInAction={signInAction}/>)	
+	}
 }
 
 export default App;

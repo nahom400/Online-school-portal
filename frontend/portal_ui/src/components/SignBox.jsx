@@ -9,8 +9,8 @@ function SignBox({signInAction, isValidating, error}){
 				
 
 			</label><select name="role_selector" id="role_selector" defaultValue={localStorage.getItem('ROLE')}>
-				 	<option value="teacher">Teacher</option>
-				 	<option value="student">Student</option>
+				 	<option value="Teacher">Teacher</option>
+				 	<option value="Student">Student</option>
 				 </select> </div>
 				<div className="d-flex gap-2 justify-content-around align-items-center"><label> Username:  
 				

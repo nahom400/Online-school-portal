@@ -1,14 +1,32 @@
 from rest_framework import serializers
 from .models import Teacher, Student, Mark, Subject
+
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ['username','firstname','lastname','password','token']
+    
+    def to_representation(self, instance):
+        return {
+            'username':instance.user.username,
+            'first_name':instance.user.first_name,
+            'last_name':instance.user.last_name,
+            'email':instance.user.email,
+            'DOB':instance.date_of_birth,
+            'role':'Student'
+           }
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ['username','firstname','lastname','password','token']
+    
+    def to_representation(self, instance):
+        return {
+            'username':instance.user.username,
+            'first_name':instance.user.first_name,
+            'last_name':instance.user.last_name,
+            'email':instance.user.email,
+            'role':'Teacher'
+           }
 
 class MarkSerializer(serializers.ModelSerializer):
     student_name = serializers.SerializerMethodField()
@@ -20,7 +38,8 @@ class MarkSerializer(serializers.ModelSerializer):
         fields = ['student', 'student_name','subject_name','mark','grade_letter','date_recorded']
 
     def get_student_name(self, obj):
-        return str(obj.student)
+        user = obj.student.user
+        return str(f'{user.first_name} {user.last_name}')
 
     def get_subject_name(self, obj):
         return str(obj.subject)
