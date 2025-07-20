@@ -5,8 +5,10 @@ from api_server.models import Student, Teacher, Subject, Mark
 from django.contrib.auth.models import User
 
 fake = Faker()
+def generate_token():
+    return hashlib.sha256(fake.uuid4().encode()).hexdigest()[:30]
 
-print("Seeding database...")
+# Run the following code in django shell! I deletes all objects t("Seeding database...")
 
 NUM_TEACHERS = 7
 NUM_SUBJECTS = 7
