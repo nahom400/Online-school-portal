@@ -34,7 +34,9 @@ for _ in range(NUM_STUDENTS+NUM_TEACHERS):
     users.append(u)
 
 print("Generating teachers...")
-teachers = []
+teachers = [
+
+]
 userid = 0
 for _ in range(NUM_TEACHERS):
     t = Teacher.objects.create(

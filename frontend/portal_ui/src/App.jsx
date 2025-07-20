@@ -63,7 +63,7 @@ function App(){
 			).then(res => res.json())
 		if (!profileData){
 		profileFetch.then(data=>{
-				setProfileData(data)})
+			setProfileData(data)})
 		}
 		}
 

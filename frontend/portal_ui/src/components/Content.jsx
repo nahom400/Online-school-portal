@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState, useEffect } from "react"
 import useSWR from 'swr'
 
@@ -19,7 +20,7 @@ export default function Content({display, token, role, profileData}){
 			return (<Scores username={profileData.username}
 				role={profileData.role} 
 				token={token}
-				doUpdate={}/>)
+				doUpdate={doUpdate}/>)
 		}
 		else if (display==='table'){
 			return (<h1>Nothing's on the table</h1>)
@@ -57,21 +58,25 @@ function Scores({role, token, username}){
 	},
 	[editMode]
 	)
-	
+	function dataFormatter(dt){
+		
+		console.log(Array.from(dt))
+	}
 
-	function handleEditMode(){
+	function handleEditMode(formData){
 		/*##################################	
 		handleEditMode makes the table to 
 		rerender it self as an editable mode
 		this feature is for role=teachers
 		##################################*/
-		setEditMode(!editMode)
 		if (editMode){
-			const 
+			const data = Object.fromEntries(formData.entries())
+			const response = putMarksToDatabase(username, token, data)
+			response.then((res)=>{setFullUrl(null)})
 		}
+		setEditMode(!editMode)
 	}
 	if (data){
-		console.log(data)
 		/*##################################	
 		When there is data we check the 
 		role and then render the table!
@@ -86,11 +91,11 @@ function Scores({role, token, username}){
 		else if (role === 'Teacher'){
 			return (
 				<>
-				<form action={updateMarks}>
+				<form action={handleEditMode}>
 				<div className="d-flex justify-content-end m-1">
 					<button type='button' className="btn bg-transparent m-2">Refresh</button>
-					<button type={'button'} className="btn btn-primary m-2" 
-							onClick={handleEditMode}>{editMode ? 'Save':'Edit'}</button>
+					<button type={'submit'} className="btn btn-primary m-2" 
+							>{editMode ? 'Save':'Edit'}</button>
 				</div>
 				<Table dataToDisplay={data} role={role} editMode={editMode}/>
 				</form>	
@@ -148,14 +153,37 @@ it can easily be 'reconfigured'
 ##################################*/
 
 
-// async function updateProfileData(username, password){
-// 		const res = await axios.post('http://localhost:8000/auth/get_token/',
-// 			({'username':username, 'password':password}))
-// 		const token = res.data.token
-// 		return token
-// 	}
+async function putMarksToDatabase(username, token, _data){
+		console.log(token)
 
-function Table({dataToDisplay, role, editMode=false}){
+
+		/*##################################	
+		Formatting the data for less backend
+		work-load! 
+		##################################*/
+		const _keys = Object.keys(_data)
+		const data = _keys.map((key)=>({
+			"student":key.split('_')[0],
+			"subject":key.split('_')[1],
+			"mark":_data[key]
+		}))
+		console.log(data)
+		const res = await axios.put(`http://localhost:8000/auth/Marks/Teacher/${username}/`,
+			data,{
+				headers:{
+			"Authorization":`Token ${token}`,
+			"Content-Type":'application/json'
+				}
+			}
+			)
+		const ress = fetch(`http://localhost:8000/auth/${role}/${username}/`, 
+			{headers:{'Authorization': `Token ${myToken}`}}
+			).then(res => res.json())
+		const response = res.data
+		return response
+	}
+6
+function Table({dataToDisplay, role, doUpdate,editMode=false}){
 	let  editableCells = []
 	let isForm = false
 	let tableHeader = []
@@ -195,7 +223,7 @@ function Table({dataToDisplay, role, editMode=false}){
 				
 				(<th className="font-monospace">
 				{editableCells[index] ? <input 
-					name={`${cell}-${index}`} 
+					name={`${row['student']}_${row['subject']}`} 
 					className="bg-transparent border-0 w-auto "
 					type="number" 
 					defaultValue={row[cell]}

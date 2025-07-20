@@ -14,9 +14,10 @@ function Dashboard({logOut, token, profileData}){
 				<nav>
 					<div>
 						<h4>Online School Portal</h4>
-			 			<em>Welcome : {profileData.firstname}</em>
+						<h6>{profileData.role}'s Portal </h6>
 		 			</div>
 					<div>
+			 			<button className="rounded rounded-pill">{profileData.first_name}</button>
 						<button className="btn btn-lg" onClick={logOut}>Logout</button>
 					</div>
 				</nav>
