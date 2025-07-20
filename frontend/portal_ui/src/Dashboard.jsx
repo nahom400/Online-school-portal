@@ -6,16 +6,18 @@ const fetcher = (...args) => fetch(...args).then((res)=>res.json())
 const BASE_URL = "http://127.0.0.1:8000/"
 const REQUEST_URL = "users/"
 
-function Dashboard({logOut, username, token, role, profileData}){		const [page, setPage] = useState('account')
+function Dashboard({logOut, token, profileData}){		
+	const [page, setPage] = useState('account')
 	return (
 		<>
 			<div className="bg-primary text-white">
 				<nav>
 					<div>
 						<h4>Online School Portal</h4>
-			 			<em>Welcome : {profileData.firstname}</em>
+						<h6>{profileData.role}'s Portal </h6>
 		 			</div>
 					<div>
+			 			<button className="rounded rounded-pill">{profileData.first_name}</button>
 						<button className="btn btn-lg" onClick={logOut}>Logout</button>
 					</div>
 				</nav>
@@ -44,7 +46,9 @@ function Dashboard({logOut, username, token, role, profileData}){		const [page, 
 						Help
 					</button>
 				</div>
-				<Content display={page} username={username} role={role} profileData={profileData}/>
+				<Content display={page} 
+					profileData={profileData}
+					token = {token}/>
 		 	</div>
 		 </> 
 	)

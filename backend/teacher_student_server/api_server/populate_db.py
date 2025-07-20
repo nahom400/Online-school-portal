@@ -2,14 +2,13 @@ from faker import Faker
 import random
 import hashlib
 from api_server.models import Student, Teacher, Subject, Mark
+from django.contrib.auth.models import User
 
 fake = Faker()
-
 def generate_token():
     return hashlib.sha256(fake.uuid4().encode()).hexdigest()[:30]
 
-# Run the following code in django shell! I deletes all objects first.
-print("Seeding database...")
+# Run the following code in django shell! I deletes all objects t("Seeding database...")
 
 NUM_TEACHERS = 7
 NUM_SUBJECTS = 7
@@ -21,19 +20,32 @@ Mark.objects.all().delete()
 Subject.objects.all().delete()
 Teacher.objects.all().delete()
 Student.objects.all().delete()
+User.objects.all().delete()
 
-print("Generating teachers...")
-teachers = []
-for _ in range(NUM_TEACHERS):
-    t = Teacher.objects.create(
+print("Generating users...")
+users = []
+for _ in range(NUM_STUDENTS+NUM_TEACHERS):
+    u = User.objects.create(
         username=fake.unique.user_name(),
         password=DUMMY_PASSWORD,
-        token=generate_token(),
-        firstname=fake.first_name(),
-        lastname=fake.last_name(),
+
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
         email=fake.unique.email()
+        )
+    users.append(u)
+
+print("Generating teachers...")
+teachers = [
+
+]
+userid = 0
+for _ in range(NUM_TEACHERS):
+    t = Teacher.objects.create(
+        user=users[userid],
     )
     teachers.append(t)
+    userid=userid+1
 
 print("Generating subjects...")
 subjects = []
@@ -49,17 +61,14 @@ for _ in range(NUM_SUBJECTS):
 
 print("Generating students...")
 students = []
+
 for _ in range(NUM_STUDENTS):
     s = Student.objects.create(
-        username=fake.unique.user_name(),
-        password=DUMMY_PASSWORD,
-        token=generate_token(),
-        firstname=fake.first_name(),
-        lastname=fake.last_name(),
-        email=fake.unique.email(),
+        user=users[userid],
         date_of_birth=fake.date_of_birth()
     )
     students.append(s)
+    userid=userid+1
 
 print("Generating marks...")
 for student in students:

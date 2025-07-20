@@ -1,13 +1,26 @@
+import axios from 'axios'
 import { useState, useEffect } from "react"
 import useSWR from 'swr'
 
-export default function Content({display, username, role, profileData}){
+
+export default function Content({display, token, role, profileData}){
+
+		function doUpdate(){
+			updateMarks(formData)
+			async function updateMarks(formData){
+					const res = await axios.post(`http://localhost:8000/auth/Marks/Teacher/${username}/`,
+						({'Authorization':`Token ${token}`,'data':data}))
+				}
+		}
 		console.log(profileData)
 		if (display==='account'){
 			return (<Account profileData={profileData}/>)
 		}
 		else if (display==='scores'){
-			return (<Scores username={username} role={role}/>)
+			return (<Scores username={profileData.username}
+				role={profileData.role} 
+				token={token}
+				doUpdate={doUpdate}/>)
 		}
 		else if (display==='table'){
 			return (<h1>Nothing's on the table</h1>)
@@ -22,14 +35,14 @@ Displays Subject Marks for students
 and also for teachers For teachers it
  will be a little more sophisticated
 ##################################*/
-function Scores({role, username,dataToDisplay}){
-	const fetcher = (...args) => fetch(...args).then((res)=>(res.json()))
+function Scores({role, token, username}){
+	const fetcher = (...args) => fetch(...args).then((res)=>{if (res) {return res.json()}})
 	const BASE_URL = "http://127.0.0.1:8000/"
 	const REQUEST_URL = "auth/Marks/"
 
 
 	const [fullUrl, setFullUrl] = useState(null)
-	const {data : response, isValidating, error} = useSWR(fullUrl, fetcher)
+	const {data, isValidating, error} = useSWR(fullUrl, ()=>(fetcher(fullUrl,{headers:{"Authorization":"Token "+token}})))
 	
 
 	/*##################################	
@@ -39,49 +52,52 @@ function Scores({role, username,dataToDisplay}){
 	const [editMode, setEditMode] = useState(false)
 
 	useEffect(()=>{
-
-		setFullUrl(`${BASE_URL+REQUEST_URL}${role}/${username}/`)
+		console.log('REACHED')
 		console.log(`${BASE_URL+REQUEST_URL}${role}/${username}/`)
+		setFullUrl(`${BASE_URL+REQUEST_URL}${role}/${username}/`)
 	},
 	[editMode]
 	)
-	
+	function dataFormatter(dt){
+		
+		console.log(Array.from(dt))
+	}
 
-	function handleEditMode(){
+	function handleEditMode(formData){
 		/*##################################	
 		handleEditMode makes the table to 
 		rerender it self as an editable mode
 		this feature is for role=teachers
 		##################################*/
-		setEditMode(!editMode)
 		if (editMode){
-			console.log('Saved')
+			const data = Object.fromEntries(formData.entries())
+			const response = putMarksToDatabase(username, token, data)
+			response.then((res)=>{setFullUrl(null)})
 		}
+		setEditMode(!editMode)
 	}
-
-	if (response){
-		console.log(response)
+	if (data){
 		/*##################################	
-		When there is response we check the 
+		When there is data we check the 
 		role and then render the table!
 		StudentMark table is this straight-forward
-		response looks like:
+		data looks like:
 		[{dictkeys},{dictkeys},{...},{...},...]
 		##################################*/
-		if (role === 'student'){
-			return (<Table dataToDisplay={response} role={role}/>)
+		if (role === 'Student'){
+			return (<Table dataToDisplay={data} role={role}/>)
 		}
 		
-		else if (role === 'teacher'){
+		else if (role === 'Teacher'){
 			return (
 				<>
-				<form action={console.log('saved')}>
+				<form action={handleEditMode}>
 				<div className="d-flex justify-content-end m-1">
 					<button type='button' className="btn bg-transparent m-2">Refresh</button>
-					<button type={'button'} className="btn btn-primary m-2" 
-							onClick={handleEditMode}>{editMode ? 'Save':'Edit'}</button>
+					<button type={'submit'} className="btn btn-primary m-2" 
+							>{editMode ? 'Save':'Edit'}</button>
 				</div>
-				<Table dataToDisplay={response} role={role} editMode={editMode}/>
+				<Table dataToDisplay={data} role={role} editMode={editMode}/>
 				</form>	
 				</>
 				)
@@ -97,17 +113,18 @@ with the changed data
 ##################################*/
 
 function Account({profileData, role }){
+	console.log('Profile DATA')
 	console.log(profileData)
 	return (<>
 		<form className="m-4 d-flex gap-2 flex-wrap" action="">
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Profile</h5>
-				<label>First Name<input type="text" defaultValue={profileData.firstname}/></label>
-				<label>Last Name<input type="text" defaultValue={profileData.lastname}/></label>
+				<label>First Name<input name='first_name' type="text" defaultValue={profileData.first_name}/></label>
+				<label>Last Name<input name='last_name' type="text" defaultValue={profileData.last_name}/></label>
 			</div>
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Credentials</h5>
-				<label>Username:<input type="text" defaultValue={profileData.username}/></label>
+				<label>Username:<input name='user_name' type="text" defaultValue={profileData.username}/></label>
 				<label>Password:<input type="button" defaultValue={"Changed Password"}/></label>
 			</div>
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
@@ -121,33 +138,65 @@ function Account({profileData, role }){
 		</>)
 }
 
-
-
 function Help(){
-	return (<h1>My HElp</h1>)
+	return (<div className="container-md">
+		<h1>Help</h1>
+		<p></p>
+	</div>)
 
 }
 
 /*##################################	
 Some Preconfigured Tools to render
-the contents:
+the contents and to send data for update:
 it can easily be 'reconfigured'
 ##################################*/
 
-function Table({dataToDisplay, role, editMode=false}){
+
+async function putMarksToDatabase(username, token, _data){
+		console.log(token)
+
+
+		/*##################################	
+		Formatting the data for less backend
+		work-load! 
+		##################################*/
+		const _keys = Object.keys(_data)
+		const data = _keys.map((key)=>({
+			"student":key.split('_')[0],
+			"subject":key.split('_')[1],
+			"mark":_data[key]
+		}))
+		console.log(data)
+		const res = await axios.put(`http://localhost:8000/auth/Marks/Teacher/${username}/`,
+			data,{
+				headers:{
+			"Authorization":`Token ${token}`,
+			"Content-Type":'application/json'
+				}
+			}
+			)
+		const ress = fetch(`http://localhost:8000/auth/${role}/${username}/`, 
+			{headers:{'Authorization': `Token ${myToken}`}}
+			).then(res => res.json())
+		const response = res.data
+		return response
+	}
+6
+function Table({dataToDisplay, role, doUpdate,editMode=false}){
 	let  editableCells = []
 	let isForm = false
 	let tableHeader = []
 	let fields = []
 
-	if (role==='teacher'){
+	if (role==='Teacher'){
 		console.log('tede')
 		editableCells = [false, false, true]
 		isForm = true
 		tableHeader = ['Student name','Grade','Mark']
 		fields = ['student_name', 'grade_letter',  'mark']
 	}
-	else if (role==='student'){
+	else if (role==='Student'){
 		console.log(dataToDisplay)
 		editableCells = [false, false, false]
 		isForm = false
@@ -174,7 +223,7 @@ function Table({dataToDisplay, role, editMode=false}){
 				
 				(<th className="font-monospace">
 				{editableCells[index] ? <input 
-					name={`${cell}-${index}`} 
+					name={`${row['student']}_${row['subject']}`} 
 					className="bg-transparent border-0 w-auto "
 					type="number" 
 					defaultValue={row[cell]}
