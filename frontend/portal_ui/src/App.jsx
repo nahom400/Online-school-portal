@@ -19,15 +19,9 @@ async function obtainToken(username, password){
 function App(){
 
 	const [state, dispatch] = useReducer(reduceLogin, initialLoginState)
-	
-
 
 	/*##################################	
-	SIGN IN ACTION TO CREATE A LOGIN-SESSION:
-		This block of code is for initiating a login session
-		with user. It authenticates the username and password
-		then saves the token and username to localStorage for 
-		subsequent logins to use to validate and use
+	
 	##################################*/
 	
 
@@ -51,8 +45,6 @@ function App(){
 
 
 	/*##################################	
-	Another fetch to obtain the state.profileData
-	after authentication
 	##################################*/
 	if (!state.myToken && !state.formMode){
 		dispatch({type:"Submit Credentials Please", status:""})

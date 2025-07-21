@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useState, useEffect } from "react"
-import useSWR from 'swr'
+import { useReducer } from 'react'
+import { initialState, reduceScores } from '../useReducers'
 
 
 export default function Content({display, token, profileData}){
@@ -24,29 +24,36 @@ Displays Subject Marks for students
 and also for teachers For teachers it
  will be a little more sophisticated
 ##################################*/
+
+
 function Scores({role, token, username}){
-	const fetcher = (...args) => fetch(...args).then((res)=>{if (res) {return res.json()}})
-	const BASE_URL = "http://127.0.0.1:8000/"
-	const REQUEST_URL = "auth/Marks/"
 
+	const [state, dispatch] = useReducer(reduceScores, initialState)
 
-	const [fullUrl, setFullUrl] = useState(null)
-	const {data, isValidating, error, mutate} = useSWR(fullUrl, ()=>(fetcher(fullUrl,{headers:{"Authorization":"Token "+token}})))
 	
+
+	if (!state.initialized){
+
+
+		const fetchScore =  fetch(`http://localhost:8000/auth/Marks/${role}/${username}/`, 
+				{headers:{'Authorization': `Token ${token}`}}
+				)
+		dispatch({type:"Getting From Database"})
+
+		fetchScore.then((res)=>{
+			const data = res.json()
+			data.then((data)=>{
+				dispatch({type:"Edit Mode Off", data:data })
+			})
+
+		})
+
+		}
 
 	/*##################################	
 	This editMode variable is for the
 	 teacher only
 	##################################*/
-	const [editMode, setEditMode] = useState(false)
-
-	useEffect(()=>{
-		console.log('REACHED')
-		console.log(`${BASE_URL+REQUEST_URL}${role}/${username}/`)
-		setFullUrl(`${BASE_URL+REQUEST_URL}${role}/${username}/`)
-	},
-	[editMode]
-	)
 
 	function handleEditMode(formData){
 		/*##################################	
@@ -54,14 +61,23 @@ function Scores({role, token, username}){
 		rerender it self as an editable mode
 		this feature is for role=teachers
 		##################################*/
-		if (editMode){
+		if (state.editmode){
 			const data = Object.fromEntries(formData.entries())
-			const response = putMarksToDatabase(username, token, data)
-			response.then((_res)=>{mutate(undefined,{revalidate:true})})
+			const response = putMarksToDatabase(username, token, data, state.data)
+			dispatch({type:"Doing Put To Database"})
+			response.then((res)=>{
+				dispatch({type:"Reinitiate"})
+			})
+			// dispatch({type:"Edit Mode Off"})
 		}
-		setEditMode(!editMode)
+		else {
+		dispatch({type:"Edit Mode On"})
+		}
 	}
-	if (data){
+	if (state.data){
+		
+	
+	
 		/*##################################	
 		When there is data we check the 
 		role and then render the table!
@@ -70,25 +86,29 @@ function Scores({role, token, username}){
 		[{dictkeys},{dictkeys},{...},{...},...]
 		##################################*/
 		if (role === 'Student'){
-			return (<Table dataToDisplay={data} role={role}/>)
+			return (<Table dataToDisplay={state.data} role={role}/>)
 		}
 		
 		else if (role === 'Teacher'){
 			return (
 				<>
-				<form action={handleEditMode} className='container-md'>
-				<div className="d-flex justify-content-end m-1">
-					<button type='button' className="btn bg-transparent m-2">Refresh</button>
-					<button type={'submit'} className="btn btn-primary m-2" 
-							>{editMode ? 'Save':'Edit'}</button>
+				<form action={handleEditMode} className='container-md mt-4'>
+				<div className="d-flex justify-content-between m-1 align-items-center">
+					<div><h4> Scores</h4></div>
+
+					<div className='d-flex align-items-center'>
+					{(state.getValidating || state.putValidating) ? <div className='spinner-border bg-info'></div>:null}
+					<button type='button' className="btn bg-transparent p-2">Refresh</button>
+					<button type='submit' className="btn btn-primary p-2" 
+							>{state.editmode ? 'Save':'Edit'}</button>
+					</div>
 				</div>
-				<Table dataToDisplay={data} role={role} editMode={editMode}/>
+				<Table dataToDisplay={state.data} role={role} editMode={state.editmode}/>
 				</form>	
 				</>
 				)
 		}
-	}
-	 
+	 }
 }
 
 /*##################################	
@@ -98,8 +118,6 @@ with the changed data
 ##################################*/
 
 function Account({profileData }){
-	console.log('Profile DATA')
-	console.log(profileData)
 	return (<>
 		<form className="m-4 d-flex gap-2 flex-wrap" action="">
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
@@ -138,9 +156,7 @@ it can easily be 'reconfigured'
 ##################################*/
 
 
-async function putMarksToDatabase(username, token, _data){
-		console.log(token)
-
+async function putMarksToDatabase(username, token, _data, diffold){
 
 		/*##################################	
 		Formatting the data for less backend
@@ -152,9 +168,19 @@ async function putMarksToDatabase(username, token, _data){
 			"subject":key.split('_')[1],
 			"mark":_data[key]
 		}))
-		console.log(data)
+
+
+		/*##################################	
+		Filtering unchanged mark entries for 
+		further reduced backend duty
+		##################################*/
+
+		const __data = data.filter((entry, index)=>
+			(entry["mark"])!==(diffold[index]["mark"]))
+		
+
 		const res = await axios.put(`http://localhost:8000/auth/Marks/Teacher/${username}/`,
-			data,{
+			__data,{
 				headers:{
 			"Authorization":`Token ${token}`,
 			"Content-Type":'application/json'
@@ -164,42 +190,41 @@ async function putMarksToDatabase(username, token, _data){
 		const response = res.data
 		return response
 	}
-6
+
 function Table({dataToDisplay, role, editMode=false}){
 	let  editableCells = []
 	let tableHeader = []
 	let fields = []
 
 	if (role==='Teacher'){
-		console.log('tede')
+
 		editableCells = [false, false, true]
 		tableHeader = ['Student name','Grade','Mark']
 		fields = ['student_name', 'grade_letter',  'mark']
 	}
 	else if (role==='Student'){
-		console.log(dataToDisplay)
 		editableCells = [false, false, false]
 		tableHeader = ['Subject','Grade','Mark']
 		fields = ['subject_name', 'grade_letter',  'mark']
 	}
 	
 	return (
-		<table className="table table-striped table-bordered table-hover flex-wrap container-md m-4">
+		<table className="table table-striped container-md m-4">
 		<thead>
 			<tr>
 				{
-					tableHeader.map((text)=>
-					(<th>{text}</th>)
+					tableHeader.map((text,index)=>
+					(<th className='table-dark'>{text}{editableCells[index]? (editMode? "✍":null):null}</th>)
 					)
 				}
 			</tr>
 		</thead>
 		<tbody>{
-		dataToDisplay.map((row, index)=>{
+		dataToDisplay.map((row)=>{
 			return (<tr>{
 			fields.map((cell, index)=>
 				
-				(<th className="font-monospace">
+				(<th className="text-decoration-none">
 				{editableCells[index] ? <input 
 					name={`${row['student']}_${row['subject']}`} 
 					className="bg-transparent border-0 w-auto "

@@ -33,8 +33,10 @@ class TeacherMarkListView(
 			##################################'''
 			print(entry['subject'])
 			markObj = Mark.objects.get(student=entry['student'], subject=entry['subject'])
-			markObj.mark = entry['mark']
-			markObj.save()
+			if markObj.mark != entry['mark']:
+				markObj.mark = entry['mark']
+				markObj.save()
+				
 		return Response(({'status':'done'}), status=200)
 
 	def get_queryset(self):

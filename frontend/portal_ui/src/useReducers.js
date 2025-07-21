@@ -17,36 +17,34 @@ const initialLoginState = {
 function reduceLogin(state, action){
 	switch(action.type){
 		case "Submit Credentials Please":{
-			const nextState = {...state, formMode:true, myToken:null,formValidating:false, status:action.status}
-			console.log(nextState)
-			return nextState
+			
+			return {...state, formMode:true, myToken:null,formValidating:false, status:action.status}
 		}
 		case "Requesting Token":{
 			
-			console.log({...state, tokenRequest:"waiting", formValidating:true})
 			return {...state, tokenRequest:"waiting", formValidating:true, status:""}
 		}
 		case "Requesting Profile Data":{
 			
-			console.log({...state, profileDataRequest:"waiting"})
 			return {...state, profileDataRequest:"waiting"}
 		}
 		case "Token Response":{
 			
-			console.log({...state, tokenRequest:action.response, myToken:action.token })
 			return {...state, tokenRequest:action.response, myToken:action.token, formValidating:false, formMode:false}
 		}
 		case "Profile Data Response":{
 
-			console.log({...state, profileDataRequest:action.response, profileData:action.profileData})
 			return {...state, profileDataRequest:action.response, profileData:action.profileData}
 		}
 		case "Logout":{
 			localStorage.removeItem('ACCESS_TOKEN')
-			console.log({...initialLoginState, myToken:null})
 			return {...initialLoginState, myToken:null}
 		}
+		default:{
+			return {...state}
+		}
 	}
+	throw Error('Unknown action: ' + action.type);
 
 }
 
@@ -56,8 +54,46 @@ useReducer for the scores page
 ###############################
 */
 const initialState = {
-	"editmode":"",
-	"update":""
+	"initialized":false,
+	"data":[],
+	"editmode":true,
+	"putValidating":false,
+	"getValidating":false,
+	"status":"",
+	"fullUrl":null
+}
+
+function reduceScores(state, action){
+	switch (action.type){
+	case "Getting From Database":{ // THESE ARE THE STEPS 1,5
+
+		
+		return {...state, initialized:true, getValidating:true}
+		}
+	
+	case "Edit Mode Off":{//2,6
+
+		return {...state, data:action.data, editmode:false, getValidating:false}
+		}
+
+	case "Doing Put To Database":{//4
+
+		return {...state, putValidating:true}
+		}
+	
+	case "Edit Mode On":{//3
+
+		return {...state, editmode:true}
+		}
+	case "Reinitiate":{
+		return {...initialState}
+		}
+	}
+
+
+	throw Error('Unknown action: ' + action.type);
+
 }
 
 export {initialLoginState, reduceLogin};
+export {initialState, reduceScores};
