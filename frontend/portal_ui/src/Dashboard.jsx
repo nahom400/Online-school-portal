@@ -1,10 +1,7 @@
-import { useEffect, useState } from "react"
-import useSWR from 'swr';
+import { useState } from "react"
 import Content from "./components/Content"
 
-const fetcher = (...args) => fetch(...args).then((res)=>res.json())
 const BASE_URL = "http://127.0.0.1:8000/"
-const REQUEST_URL = "users/"
 
 function Dashboard({logOut, token, profileData}){		
 	const [page, setPage] = useState('account')
@@ -29,11 +26,6 @@ function Dashboard({logOut, token, profileData}){
 						className={" tabbutton btn btn-sm  " + (page==='account' ? 'bg-primary-subtle': 'bg-transparent')} 
 						onClick={()=>(setPage('account'))}>
 						Account
-					</button>
-					<button 
-						className={"tabbutton btn btn-sm " + (page==='table' ? 'bg-primary-subtle': 'bg-transparent')}
-						onClick={()=>(setPage('table'))} >
-						What's on the table?
 					</button>
 					<button 
 						className={" tabbutton btn btn-sm " + (page==='scores' ? 'bg-primary-subtle': 'bg-transparent')} 

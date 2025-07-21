@@ -1,6 +1,5 @@
 from faker import Faker
 import random
-import hashlib
 from api_server.models import Student, Teacher, Subject, Mark
 from django.contrib.auth.models import User
 
@@ -11,7 +10,7 @@ print("Seeding database...")
 NUM_TEACHERS = 7
 NUM_SUBJECTS = 7
 NUM_STUDENTS = 50
-DUMMY_PASSWORD = 1234
+DUMMY_PASSWORD = "dummy1234"
 
 # Clear existing data
 Mark.objects.all().delete()
@@ -25,12 +24,12 @@ users = []
 for _ in range(NUM_STUDENTS+NUM_TEACHERS):
     u = User.objects.create(
         username=fake.unique.user_name(),
-        password=DUMMY_PASSWORD,
-
         first_name=fake.first_name(),
         last_name=fake.last_name(),
         email=fake.unique.email()
         )
+    u.set_password(DUMMY_PASSWORD)
+    u.save()
     users.append(u)
 
 print("Generating teachers...")

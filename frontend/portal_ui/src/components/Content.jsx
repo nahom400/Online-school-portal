@@ -3,15 +3,8 @@ import { useState, useEffect } from "react"
 import useSWR from 'swr'
 
 
-export default function Content({display, token, role, profileData}){
+export default function Content({display, token, profileData}){
 
-		function doUpdate(){
-			updateMarks(formData)
-			async function updateMarks(formData){
-					const res = await axios.post(`http://localhost:8000/auth/Marks/Teacher/${username}/`,
-						({'Authorization':`Token ${token}`,'data':data}))
-				}
-		}
 		console.log(profileData)
 		if (display==='account'){
 			return (<Account profileData={profileData}/>)
@@ -19,11 +12,7 @@ export default function Content({display, token, role, profileData}){
 		else if (display==='scores'){
 			return (<Scores username={profileData.username}
 				role={profileData.role} 
-				token={token}
-				doUpdate={doUpdate}/>)
-		}
-		else if (display==='table'){
-			return (<h1>Nothing's on the table</h1>)
+				token={token}/>)
 		}
 		else if (display==='help'){
 			return (<Help/>)
@@ -42,7 +31,7 @@ function Scores({role, token, username}){
 
 
 	const [fullUrl, setFullUrl] = useState(null)
-	const {data, isValidating, error} = useSWR(fullUrl, ()=>(fetcher(fullUrl,{headers:{"Authorization":"Token "+token}})))
+	const {data, isValidating, error, mutate} = useSWR(fullUrl, ()=>(fetcher(fullUrl,{headers:{"Authorization":"Token "+token}})))
 	
 
 	/*##################################	
@@ -58,10 +47,6 @@ function Scores({role, token, username}){
 	},
 	[editMode]
 	)
-	function dataFormatter(dt){
-		
-		console.log(Array.from(dt))
-	}
 
 	function handleEditMode(formData){
 		/*##################################	
@@ -72,7 +57,7 @@ function Scores({role, token, username}){
 		if (editMode){
 			const data = Object.fromEntries(formData.entries())
 			const response = putMarksToDatabase(username, token, data)
-			response.then((res)=>{setFullUrl(null)})
+			response.then((_res)=>{mutate(undefined,{revalidate:true})})
 		}
 		setEditMode(!editMode)
 	}
@@ -91,7 +76,7 @@ function Scores({role, token, username}){
 		else if (role === 'Teacher'){
 			return (
 				<>
-				<form action={handleEditMode}>
+				<form action={handleEditMode} className='container-md'>
 				<div className="d-flex justify-content-end m-1">
 					<button type='button' className="btn bg-transparent m-2">Refresh</button>
 					<button type={'submit'} className="btn btn-primary m-2" 
@@ -112,7 +97,7 @@ detais; and can update the database
 with the changed data
 ##################################*/
 
-function Account({profileData, role }){
+function Account({profileData }){
 	console.log('Profile DATA')
 	console.log(profileData)
 	return (<>
@@ -176,30 +161,24 @@ async function putMarksToDatabase(username, token, _data){
 				}
 			}
 			)
-		const ress = fetch(`http://localhost:8000/auth/${role}/${username}/`, 
-			{headers:{'Authorization': `Token ${myToken}`}}
-			).then(res => res.json())
 		const response = res.data
 		return response
 	}
 6
-function Table({dataToDisplay, role, doUpdate,editMode=false}){
+function Table({dataToDisplay, role, editMode=false}){
 	let  editableCells = []
-	let isForm = false
 	let tableHeader = []
 	let fields = []
 
 	if (role==='Teacher'){
 		console.log('tede')
 		editableCells = [false, false, true]
-		isForm = true
 		tableHeader = ['Student name','Grade','Mark']
 		fields = ['student_name', 'grade_letter',  'mark']
 	}
 	else if (role==='Student'){
 		console.log(dataToDisplay)
 		editableCells = [false, false, false]
-		isForm = false
 		tableHeader = ['Subject','Grade','Mark']
 		fields = ['subject_name', 'grade_letter',  'mark']
 	}
@@ -217,7 +196,6 @@ function Table({dataToDisplay, role, doUpdate,editMode=false}){
 		</thead>
 		<tbody>{
 		dataToDisplay.map((row, index)=>{
-			const y = index
 			return (<tr>{
 			fields.map((cell, index)=>
 				

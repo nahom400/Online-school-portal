@@ -31,10 +31,3 @@ class Mark(models.Model):
 
     class Meta:
         unique_together = ('student', 'subject')
-
-    def save(self, *args, **kwargs):
-        '''##################################
-        This clamps the value of mark to be 
-        between 1 and 100 whatsoever!
-        ##################################'''
-        self.mark = max(1, min(float(self.mark), 100))
