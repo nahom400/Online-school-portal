@@ -19,15 +19,9 @@ async function obtainToken(username, password){
 function App(){
 
 	const [state, dispatch] = useReducer(reduceLogin, initialLoginState)
-	
-
 
 	/*##################################	
-	SIGN IN ACTION TO CREATE A LOGIN-SESSION:
-		This block of code is for initiating a login session
-		with user. It authenticates the username and password
-		then saves the token and username to localStorage for 
-		subsequent logins to use to validate and use
+	
 	##################################*/
 	
 
@@ -51,8 +45,6 @@ function App(){
 
 
 	/*##################################	
-	Another fetch to obtain the state.profileData
-	after authentication
 	##################################*/
 	if (!state.myToken && !state.formMode){
 		dispatch({type:"Submit Credentials Please", status:""})
@@ -103,9 +95,6 @@ function App(){
 			</div>
 			</>)
 	}
-		
-	if (state.myToken){
-		}
 	
 	/*##################################	
 	LOGOUT LOGIC : removes token and username 
@@ -113,14 +102,16 @@ function App(){
 	||	tokens; the initial page becomes the login 
 	VV	page for all users;
 	##################################*/
+	function logOut(){
+		localStorage.removeItem("ACCESS_TOKEN")
+		localStorage.removeItem("USER_NAME")
+		dispatch({type:'Logout'})
+	}
 	
-
-		/*##################################	
-		CORE SIGN IN LOGIC DOES THESE:
-			1. CREATING A SESSION
-			2. VALIDATING A SESSION IF EXISTS
-			3. 
-		##################################*/
+	/*##################################	
+	CORE SIGN IN CHANGES THE ENTIRE UI HERE
+	WHEN PROFILE DATA COMES!
+	##################################*/
 	if (state.profileData){
 		return (<Dashboard profileData={state.profileData}
 					logOut={logOut}
@@ -128,11 +119,6 @@ function App(){
 					/>)
 	}
 
-	function logOut(){
-		localStorage.removeItem("ACCESS_TOKEN")
-		localStorage.removeItem("USER_NAME")
-		dispatch({type:'Logout'})
-	}
 }
 
 export default App;

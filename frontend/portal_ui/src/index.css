@@ -42,3 +42,11 @@ nav{
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
+
+.img-thumbnail{
+  width: 150px ;
+
+}
+.editbutton{
+  width: 80px;
+}

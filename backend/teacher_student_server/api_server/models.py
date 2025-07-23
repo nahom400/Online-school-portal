@@ -7,10 +7,13 @@ TOKEN_DURATION = 72
 class Student(models.Model):
     user = models.OneToOneField(to=User, null=True, on_delete=models.CASCADE)
     date_of_birth = models.DateField(null=True)
+    nationality = models.CharField(null=True)
+    address = models.CharField(null=True)
 
 class Teacher(models.Model):
     user = models.OneToOneField(to=User, null=True, on_delete=models.CASCADE)
-
+    nationality = models.CharField(null=True)
+    address = models.CharField(null=True)
     def get_id(self):
         return self.id
 
