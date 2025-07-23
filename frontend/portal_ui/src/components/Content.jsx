@@ -92,15 +92,20 @@ function Scores({role, token, username}){
 		else if (role === 'Teacher'){
 			return (
 				<>
-				<form action={handleEditMode} className='container-md mt-4'>
+				<form action={handleEditMode} className='container-sm mt-4 '>
 				<div className="d-flex justify-content-between m-1 align-items-center">
-					<div><h4> Scores</h4></div>
+					<div>
+						<h4> Scores</h4> 
+						<p> Click the edit button to set marks for students and then the same button will save</p>
+					</div>
 
-					<div className='d-flex align-items-center'>
+					<div className='d-flex align-items-center gap-2'>
 					{(state.getValidating || state.putValidating) ? <div className='spinner-border bg-info'></div>:null}
-					<button type='button' className="btn bg-transparent p-2">Refresh</button>
-					<button type='submit' className="btn btn-primary p-2" 
-							>{state.editmode ? 'Save':'Edit'}</button>
+					<button type='button' className="btn btn-success p-2" 
+						onClick={()=>dispatch({type:"Reinitiate"})}>
+						{state.editmode ? "Discard" : "Refresh"}</button>
+					<button type='submit' className="btn btn-primary p-2 editbutton" 
+							>{state.editmode ? 'Save':'  Edit  '}</button>
 					</div>
 				</div>
 				<Table dataToDisplay={state.data} role={role} editMode={state.editmode}/>
@@ -117,33 +122,76 @@ detais; and can update the database
 with the changed data
 ##################################*/
 
-function Account({profileData }){
+function Account({profileData, role }){
 	return (<>
 		<form className="m-4 d-flex gap-2 flex-wrap" action="">
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Profile</h5>
 				<label htmlFor=""><img className='img-thumbnail showing' alt='profile_image' src={profileData.imgUrl? profileData.imgurl : 'src/assets/images/DefaultProfileImage.png'}/></label>
-				<label>First Name<input name='first_name' type="text" defaultValue={profileData.first_name}/></label>
-				<label>Last Name<input name='last_name' type="text" defaultValue={profileData.last_name}/></label>
 
-				<label>Nationality<input name='first_name' type="text" defaultValue={profileData.nationality}/></label>
-				<label>Address<input name='last_name' type="text" defaultValue={profileData.address}/></label>
+				<label>First Name: <input className='input-group' name='first_name' type="text" defaultValue={profileData.first_name}/></label>
+				<label>Last Name: <input className='input-group' name='last_name' type="text" defaultValue={profileData.last_name}/></label>
+
+				<label>Nationality: <input className='input-group' name='first_name' type="text" defaultValue={profileData.nationality}/></label>
+				<label>Address: <input className='input-group' name='last_name' type="text" defaultValue={profileData.address}/></label>
 
 			</div>
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Credentials</h5>
-				<label>Username:<input name='user_name' type="text" defaultValue={profileData.username}/></label>
-				<label>Password:<input type="button" defaultValue={"Changed Password"}/></label>
+				<label>Username: <input className='input-group' name='user_name' type="text" defaultValue={profileData.username}/></label>
+				<label>Password: <input className='input-group' type="button" defaultValue={"Changed Password"}/></label>
 			</div>
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
-				<h5>Enrollement</h5>
-				<label><input type="text"/></label>
-				<label><input type="text"/></label>
+				
+				{ profileData.role === 'Student' ? <><h5>Enrollment</h5>
+								<p>Dear {profileData.first_name}: You have been enrolled to these course; </p>
+								<table className="table container-md">
+								<thead>
+									<tr>
+										<th className='bg-primary text-white'>Course</th>
+										<th className='bg-primary text-white'>Code</th>
+										<th className='bg-primary text-white'>Instructor</th>
+									</tr>
+								</thead>
+								<tbody>{
+								profileData.enrollment.map((row)=>{
+									return (
+									<tr>
+										<th className='bg-white'>{row.name}</th>
+										<th className='bg-white'>{row.id}</th>
+										<th className='bg-white'>{row.teacher_name}</th>
+									</tr>)
+									}
+								)
+								}
+								</tbody>
+								</table> </> : null }
+				{ profileData.role === 'Teacher' ? 
+					<><h5>Course</h5>
+								<p>You have been assigned to these course; </p>
+								<table className="table container-md">
+								<thead>
+									<tr>
+										<th className='bg-primary text-white'>Course</th>
+										<th className='bg-primary text-white'>Code</th>
+									</tr>
+								</thead>
+								<tbody>{
+								profileData.courses.map((row)=>{
+									return (
+									<tr>
+										<th className='bg-white'>{row.name}</th>
+										<th className='bg-white'>{row.id}</th>
+									</tr>)
+									}
+								)
+								}
+								</tbody>
+								</table> </>
+					 : null}
 			</div>
-		
 		</form>
-
-		</>)
+</>)
 }
 
 function Help(){
@@ -203,7 +251,7 @@ function Table({dataToDisplay, role, editMode=false}){
 
 	if (role==='Teacher'){
 
-		editableCells = [false, false, true]
+		editableCells = [false, true, false]
 		tableHeader = ['Student name','Mark','Grade']
 		fields = ['student_name', 'mark',  'grade_letter']
 	}
@@ -228,12 +276,11 @@ function Table({dataToDisplay, role, editMode=false}){
 		<tbody>{
 		dataToDisplay.map((row)=>{
 			return (<tr>{
-			fields.map((cell, index)=>
-				
+			fields.map((cell, index)=>		
 				(<th className="text-decoration-none">
 				{editableCells[index] ? <input 
 					name={`${row['student']}_${row['subject']}`} 
-					className="bg-transparent border-0 w-auto "
+					className="bg-transparent border-0 w-25 "
 					type="number" 
 					defaultValue={row[cell]}
 					readOnly={!editMode}/>

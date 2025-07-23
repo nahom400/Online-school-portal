@@ -108,11 +108,10 @@ function App(){
 		dispatch({type:'Logout'})
 	}
 	
-
-		/*##################################	
-		CORE SIGN IN CHANGES THE ENTIRE UI HERE
-		WHEN PROFILE DATA COMES!
-		##################################*/
+	/*##################################	
+	CORE SIGN IN CHANGES THE ENTIRE UI HERE
+	WHEN PROFILE DATA COMES!
+	##################################*/
 	if (state.profileData){
 		return (<Dashboard profileData={state.profileData}
 					logOut={logOut}

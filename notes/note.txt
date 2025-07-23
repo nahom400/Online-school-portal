@@ -9,4 +9,4 @@ Here are the major changes we need
 	+ pip install faker to populate the database again
 	- add a forgotten-password feature!
 	- bring some images: school logo, student profile image or use mock images or some puppets! 
-	- try to reduce code length as much as possible, and increase code readablity as much as possible ::
+	- try to reduce code length as much as possible, and increase code readablity as much as possible
