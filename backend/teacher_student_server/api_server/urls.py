@@ -2,7 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import TeacherView, StudentView, TeacherMarkListView, StudentMarkListView
+from .views import TeacherView, StudentView, TeacherMarkListView, StudentMarkListView, perform_profile_update
 # Create a router and register our viewset with it.
 router = DefaultRouter()
 # router.register(r'pdfs', PdfFileViewSet)
@@ -16,4 +16,5 @@ urlpatterns = [
     path('Student/<str:user__username>/', StudentView.as_view()),
     path('Marks/Teacher/<str:username>/', TeacherMarkListView.as_view()),
     path('Marks/Student/<str:username>/', StudentMarkListView.as_view()),
+    path('Update/<str:user__username>/', perform_profile_update)
 ]

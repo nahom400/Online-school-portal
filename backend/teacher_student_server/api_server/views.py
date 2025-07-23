@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, mixins
+from rest_framework.decorators import api_view
 from django.http import Http404
 
 from .models import Mark, Teacher, Student
@@ -60,6 +61,7 @@ class TeacherView(generics.RetrieveUpdateAPIView):
 
 	authentication_classes = [TokenAuthentication]
 	permission_classes = [permissions.IsAuthenticated]
+
 	def get_queryset(self, **kwargs):
 		username = self.kwargs[self.lookup_field]
 		if (self.request.user.username == username):
@@ -81,3 +83,8 @@ class StudentView(generics.RetrieveUpdateAPIView):
 			return Student.objects.all()
 		else:
 			raise Http404
+
+@api_view(["PUT"])
+def perform_profile_update( self,request, *args, **kwargs):
+	user = kwargs.get("user__username")
+	print(user) 

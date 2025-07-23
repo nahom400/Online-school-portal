@@ -1,7 +1,7 @@
-import axios from 'axios'
-import { useReducer } from 'react'
 import { initialState, reduceScores } from '../useReducers'
 
+import axios from 'axios'
+import { useReducer } from 'react'
 
 export default function Content({display, token, profileData}){
 
@@ -29,15 +29,14 @@ and also for teachers For teachers it
 function Scores({role, token, username}){
 
 	const [state, dispatch] = useReducer(reduceScores, initialState)
-
 	
 
 	if (!state.initialized){
 
-
 		const fetchScore =  fetch(`http://localhost:8000/auth/Marks/${role}/${username}/`, 
-				{headers:{'Authorization': `Token ${token}`}}
-				)
+				{
+					headers:{'Authorization': `Token ${token}`}
+				})
 		dispatch({type:"Getting From Database"})
 
 		fetchScore.then((res)=>{
@@ -60,6 +59,7 @@ function Scores({role, token, username}){
 		handleEditMode makes the table to 
 		rerender it self as an editable mode
 		this feature is for role=teachers
+
 		##################################*/
 		if (state.editmode){
 			const data = Object.fromEntries(formData.entries())
@@ -68,7 +68,7 @@ function Scores({role, token, username}){
 			response.then((res)=>{
 				dispatch({type:"Reinitiate"})
 			})
-			// dispatch({type:"Edit Mode Off"})
+			
 		}
 		else {
 		dispatch({type:"Edit Mode On"})
@@ -122,8 +122,13 @@ function Account({profileData }){
 		<form className="m-4 d-flex gap-2 flex-wrap" action="">
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Profile</h5>
+				<label htmlFor=""><img className='img-thumbnail showing' alt='profile_image' src={profileData.imgUrl? profileData.imgurl : 'src/assets/images/DefaultProfileImage.png'}/></label>
 				<label>First Name<input name='first_name' type="text" defaultValue={profileData.first_name}/></label>
 				<label>Last Name<input name='last_name' type="text" defaultValue={profileData.last_name}/></label>
+
+				<label>Nationality<input name='first_name' type="text" defaultValue={profileData.nationality}/></label>
+				<label>Address<input name='last_name' type="text" defaultValue={profileData.address}/></label>
+
 			</div>
 			<div className="d-flex flex-column gap-2 m-4 border-1 border-opacity-50 spinner-border-sm">
 				<h5>Credentials</h5>
@@ -199,13 +204,14 @@ function Table({dataToDisplay, role, editMode=false}){
 	if (role==='Teacher'){
 
 		editableCells = [false, false, true]
-		tableHeader = ['Student name','Grade','Mark']
-		fields = ['student_name', 'grade_letter',  'mark']
+		tableHeader = ['Student name','Mark','Grade']
+		fields = ['student_name', 'mark',  'grade_letter']
 	}
 	else if (role==='Student'){
-		editableCells = [false, false, false]
-		tableHeader = ['Subject','Grade','Mark']
-		fields = ['subject_name', 'grade_letter',  'mark']
+		dataToDisplay.date_recorded = dataToDisplay['date_recorded']?.toString().split('T')[0]
+		editableCells = [false, false, false, false]
+		tableHeader = ['Subject','Mark','Grade','Date Recorded']
+		fields = ['subject_name', 'mark',  'grade_letter', 'date_recorded']
 	}
 	
 	return (

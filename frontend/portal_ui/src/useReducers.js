@@ -45,7 +45,6 @@ function reduceLogin(state, action){
 		}
 	}
 	throw Error('Unknown action: ' + action.type);
-
 }
 
 /*
@@ -97,3 +96,8 @@ function reduceScores(state, action){
 
 export {initialLoginState, reduceLogin};
 export {initialState, reduceScores};
+
+
+/*##################################	
+useReducer for account page
+##################################*/

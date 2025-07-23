@@ -12,6 +12,8 @@ class StudentSerializer(serializers.ModelSerializer):
             'last_name':instance.user.last_name,
             'email':instance.user.email,
             'DOB':instance.date_of_birth,
+            'nationality':instance.nationality,
+            'address':instance.address,
             'role':'Student'
            }
 
@@ -25,6 +27,8 @@ class TeacherSerializer(serializers.ModelSerializer):
             'first_name':instance.user.first_name,
             'last_name':instance.user.last_name,
             'email':instance.user.email,
+            'nationality':instance.nationality,
+            'address':instance.address,
             'role':'Teacher'
            }
 

@@ -95,9 +95,6 @@ function App(){
 			</div>
 			</>)
 	}
-		
-	if (state.myToken){
-		}
 	
 	/*##################################	
 	LOGOUT LOGIC : removes token and username 
@@ -105,13 +102,16 @@ function App(){
 	||	tokens; the initial page becomes the login 
 	VV	page for all users;
 	##################################*/
+	function logOut(){
+		localStorage.removeItem("ACCESS_TOKEN")
+		localStorage.removeItem("USER_NAME")
+		dispatch({type:'Logout'})
+	}
 	
 
 		/*##################################	
-		CORE SIGN IN LOGIC DOES THESE:
-			1. CREATING A SESSION
-			2. VALIDATING A SESSION IF EXISTS
-			3. 
+		CORE SIGN IN CHANGES THE ENTIRE UI HERE
+		WHEN PROFILE DATA COMES!
 		##################################*/
 	if (state.profileData){
 		return (<Dashboard profileData={state.profileData}
@@ -120,11 +120,6 @@ function App(){
 					/>)
 	}
 
-	function logOut(){
-		localStorage.removeItem("ACCESS_TOKEN")
-		localStorage.removeItem("USER_NAME")
-		dispatch({type:'Logout'})
-	}
 }
 
 export default App;

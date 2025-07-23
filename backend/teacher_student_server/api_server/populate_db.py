@@ -9,7 +9,7 @@ print("Seeding database...")
 
 NUM_TEACHERS = 7
 NUM_SUBJECTS = 7
-NUM_STUDENTS = 50
+NUM_STUDENTS = 20
 DUMMY_PASSWORD = "dummy1234"
 
 # Clear existing data
@@ -40,6 +40,8 @@ userid = 0
 for _ in range(NUM_TEACHERS):
     t = Teacher.objects.create(
         user=users[userid],
+        nationality = fake.country(),
+        address = "Addis"
     )
     teachers.append(t)
     userid=userid+1
@@ -62,7 +64,9 @@ students = []
 for _ in range(NUM_STUDENTS):
     s = Student.objects.create(
         user=users[userid],
-        date_of_birth=fake.date_of_birth()
+        date_of_birth=fake.date_of_birth(),
+        nationality = fake.country(),
+        address = "Addis"
     )
     students.append(s)
     userid=userid+1
